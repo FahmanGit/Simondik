@@ -1,0 +1,79 @@
+/* =====================================================================
+   E-Mondik — komponen bergaya shadcn (CSS murni, dipakai bersama Tailwind CDN)
+   ===================================================================== */
+:root {
+  --border: 214 32% 91%;
+  --background: 210 40% 98%;
+  --foreground: 222 47% 11%;
+  --muted-foreground: 215 16% 47%;
+  --primary: 221 83% 53%;
+  --success: 142 71% 45%;
+  --danger: 0 72% 51%;
+  --warning: 38 92% 50%;
+}
+* { box-sizing: border-box; }
+body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; margin: 0; }
+
+/* ---------- Input & label ---------- */
+.ui-input {
+  width: 100%; height: 2.5rem; padding: 0 0.75rem;
+  border: 1px solid hsl(var(--border)); border-radius: 0.5rem;
+  background: #fff; font-size: 0.875rem; color: hsl(var(--foreground)); outline: none;
+}
+.ui-input:focus { border-color: hsl(var(--primary)); box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15); }
+select.ui-input { appearance: auto; cursor: pointer; }
+.ui-label { display: block; margin-bottom: 0.35rem; font-size: 0.8rem; font-weight: 500; color: hsl(var(--foreground)); }
+
+/* ---------- Tombol ---------- */
+.ui-btn-primary, .ui-btn-outline, .ui-btn-danger {
+  display: inline-flex; align-items: center; gap: 0.45rem; justify-content: center;
+  height: 2.5rem; padding: 0 0.9rem; border-radius: 0.5rem;
+  font-size: 0.875rem; font-weight: 500; cursor: pointer; border: 1px solid transparent;
+  transition: background .15s, opacity .15s; white-space: nowrap;
+}
+.ui-btn-primary { background: hsl(var(--primary)); color: #fff; }
+.ui-btn-primary:hover { background: hsl(var(--primary) / 0.9); }
+.ui-btn-outline { background: #fff; border-color: hsl(var(--border)); color: hsl(var(--foreground)); }
+.ui-btn-outline:hover { background: hsl(210 40% 96%); }
+.ui-btn-danger { background: hsl(var(--danger)); color: #fff; }
+.ui-btn-danger:hover { background: hsl(var(--danger) / 0.9); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ---------- Card ---------- */
+.ui-card { background: #fff; border: 1px solid hsl(var(--border)); border-radius: 0.75rem; box-shadow: 0 1px 2px rgb(0 0 0 / 0.04); }
+
+/* ---------- Sidebar nav ---------- */
+.nav-link {
+  display: flex; align-items: center; gap: 0.65rem; padding: 0.6rem 0.85rem;
+  border-radius: 0.5rem; font-size: 0.9rem; color: rgba(255,255,255,0.8); text-decoration: none;
+}
+.nav-link:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.nav-link.active { background: hsl(var(--primary)); color: #fff; }
+
+/* ---------- Tabel ---------- */
+.ui-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.ui-table th { text-align: left; padding: 0.65rem 0.75rem; color: hsl(var(--muted-foreground)); font-weight: 600; border-bottom: 1px solid hsl(var(--border)); font-size: 0.75rem; text-transform: uppercase; letter-spacing: .02em; }
+.ui-table td { padding: 0.7rem 0.75rem; border-bottom: 1px solid hsl(var(--border)); }
+.ui-table tr:hover td { background: hsl(210 40% 98%); }
+
+/* ---------- Badge status ---------- */
+.badge { display: inline-flex; padding: 0.15rem 0.6rem; border-radius: 999px; font-size: 0.72rem; font-weight: 600; }
+.badge-lulus  { background: hsl(var(--success) / 0.12); color: hsl(var(--success)); }
+.badge-diklat { background: hsl(var(--primary) / 0.12); color: hsl(var(--primary)); }
+.badge-tidak  { background: hsl(var(--danger) / 0.12); color: hsl(var(--danger)); }
+.badge-role   { background: hsl(var(--primary) / 0.10); color: hsl(var(--primary)); }
+
+/* ---------- Modal ---------- */
+.ui-modal { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; background: rgb(0 0 0 / 0.45); padding: 1rem; }
+.ui-modal-box { width: 100%; background: #fff; border-radius: 0.75rem; padding: 1.25rem 1.35rem; box-shadow: 0 20px 45px rgb(0 0 0 / 0.2); max-height: 90vh; overflow-y: auto; }
+.ui-modal-title { font-size: 1.1rem; font-weight: 700; margin: 0 0 0.75rem; }
+.ui-modal-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1.25rem; }
+
+/* ---------- Kartu statistik dashboard ---------- */
+.stat-card { background: #fff; border: 1px solid hsl(var(--border)); border-radius: 0.75rem; padding: 1.1rem 1.2rem; }
+.stat-card .val { font-size: 1.6rem; font-weight: 700; margin: 0.25rem 0; }
+.stat-icon { width: 2.25rem; height: 2.25rem; border-radius: 0.6rem; display: flex; align-items: center; justify-content: center; }
+
+.hidden { display: none !important; }
+.del-item { display: flex; align-items: center; justify-content: space-between; padding: 0.4rem 0.5rem; border-radius: 0.375rem; }
+.del-item:hover { background: hsl(210 40% 96%); }
