@@ -95,11 +95,71 @@ function renderTable() {
 }
 
 // ---------------------------------------------------------------- template
-function downloadTemplate() {
-  const ws = XLSX.utils.aoa_to_sheet([TEMPLATE_HEADERS, ["Pembentukan", "FAHMI", "DIPLOMA IV NAUTIKA", "ANGKATAN 33/KELAS 4B", "Diklat", "Laki-Laki"]]);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "TEMPLATE");
-  XLSX.writeFile(wb, "TEMPLATE_TAMBAH_PESERTA.xlsx");
+// Pilihan dropdown (sesuai sheet DROPDOWN pada template contoh).
+const OPT_JENIS = ["Pembentukan", "Peningkatan", "Pemutakhiran", "Teknis", "Revalidasi", "DPM", "Kerjasama (Non STCW)", "Diklat Kepegawaian"];
+const OPT_STATUS = ["Diklat", "Lulus", "Tidak Lulus"];
+const OPT_JK = ["Laki-Laki", "Perempuan"];
+
+async function downloadTemplate() {
+  if (typeof ExcelJS === "undefined") {
+    return toast("Library ExcelJS belum termuat. Muat ulang halaman (Ctrl+Shift+R).", "err");
+  }
+
+  const wb = new ExcelJS.Workbook();
+  const ws = wb.addWorksheet("TEMPLATE");
+  const dd = wb.addWorksheet("DROPDOWN");
+
+  // --- Isi sheet TEMPLATE: header + 1 baris contoh ---
+  ws.addRow(TEMPLATE_HEADERS);
+  ws.addRow(["Pembentukan", "FAHMI", "DIPLOMA IV NAUTIKA", "ANGKATAN 33/KELAS 4B", "Diklat", "Laki-Laki"]);
+
+  // --- Kop tabel: hijau muda + teks hitam tebal + border tipis (mirip contoh) ---
+  ws.getRow(1).eachCell((cell) => {
+    cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFDBEDD5" } };
+    cell.font = { bold: true, color: { argb: "FF000000" }, size: 12 };
+    cell.alignment = { vertical: "middle", horizontal: "center" };
+    cell.border = {
+      top: { style: "thin", color: { argb: "FF000000" } },
+      bottom: { style: "thin", color: { argb: "FF000000" } },
+      left: { style: "thin", color: { argb: "FF000000" } },
+      right: { style: "thin", color: { argb: "FF000000" } },
+    };
+  });
+  [21, 33, 32.5, 34.3, 21, 19.7].forEach((w, i) => (ws.getColumn(i + 1).width = w));
+
+  // --- Sheet DROPDOWN: sumber pilihan (tata letak mengikuti contoh: C12:E20) ---
+  dd.getCell("C12").value = "JENIS DIKLAT";
+  dd.getCell("D12").value = "STATUS";
+  dd.getCell("E12").value = "JENIS KELAMIN";
+  ["C12", "D12", "E12"].forEach((c) => (dd.getCell(c).font = { bold: true }));
+  OPT_JENIS.forEach((v, i) => (dd.getCell("C" + (13 + i)).value = v));
+  OPT_STATUS.forEach((v, i) => (dd.getCell("D" + (13 + i)).value = v));
+  OPT_JK.forEach((v, i) => (dd.getCell("E" + (13 + i)).value = v));
+  dd.getColumn(3).width = 21.3; dd.getColumn(4).width = 14; dd.getColumn(5).width = 16;
+
+  // --- Dropdown (data validation) untuk Jenis Diklat (A), Status (E), Jenis Kelamin (F) ---
+  const jEnd = 13 + OPT_JENIS.length - 1;   // 20
+  const sEnd = 13 + OPT_STATUS.length - 1;  // 15
+  const kEnd = 13 + OPT_JK.length - 1;      // 14
+  const dv = (ref) => ({
+    type: "list", allowBlank: true, formulae: [ref],
+    showErrorMessage: true, errorStyle: "warning",
+    errorTitle: "Input tidak valid", error: "Silakan pilih nilai dari daftar dropdown.",
+  });
+  for (let r = 2; r <= 1000; r++) {
+    ws.getCell("A" + r).dataValidation = dv(`DROPDOWN!$C$13:$C$${jEnd}`);
+    ws.getCell("E" + r).dataValidation = dv(`DROPDOWN!$D$13:$D$${sEnd}`);
+    ws.getCell("F" + r).dataValidation = dv(`DROPDOWN!$E$13:$E$${kEnd}`);
+  }
+
+  // --- Unduh ---
+  const buf = await wb.xlsx.writeBuffer();
+  const blob = new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "TEMPLATE_TAMBAH_PESERTA.xlsx";
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
 }
 
 // ---------------------------------------------------------------- IMPORT (auto-tag)
