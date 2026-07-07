@@ -139,6 +139,17 @@
       <div class="content">
         <!-- ---------- DASHBOARD ---------- -->
         <section id="view-dashboard" class="view space-y-6">
+          <!-- Filter dashboard (mirip modul peserta) -->
+          <div class="ui-card p-4">
+            <div class="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+              <select id="d-jenis"  class="ui-input"><option value="">Semua Diklat</option></select>
+              <select id="d-nama"   class="ui-input"><option value="">Semua Nama</option></select>
+              <select id="d-angk"   class="ui-input"><option value="">Semua Angkatan</option></select>
+              <select id="d-kelas"  class="ui-input"><option value="">Semua Kelas</option></select>
+              <select id="d-status" class="ui-input"><option value="">Semua Status</option><option>LULUS</option><option>DIKLAT</option><option>TIDAK LULUS</option></select>
+              <select id="d-jk"     class="ui-input"><option value="">Semua Jenis Kelamin</option><option>Laki-Laki</option><option>Perempuan</option></select>
+            </div>
+          </div>
           <div id="dash-cards" class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"></div>
           <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <div class="ui-card p-5">
@@ -173,10 +184,11 @@
               </div>
             </div>
             <!-- Filter -->
-            <div class="mb-4 grid grid-cols-2 gap-3 md:grid-cols-5">
+            <div class="mb-4 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
               <select id="f-jenis"   class="ui-input"><option value="">Semua Diklat</option></select>
               <select id="f-nama"    class="ui-input"><option value="">Semua Nama</option></select>
-              <select id="f-angk"    class="ui-input"><option value="">Semua ANGKT/KLS</option></select>
+              <select id="f-angk"    class="ui-input"><option value="">Semua Angkatan</option></select>
+              <select id="f-kelas"   class="ui-input"><option value="">Semua Kelas</option></select>
               <select id="f-status"  class="ui-input"><option value="">Semua Status</option><option>LULUS</option><option>DIKLAT</option><option>TIDAK LULUS</option></select>
               <select id="f-jk"      class="ui-input"><option value="">Semua Jenis Kelamin</option><option>Laki-Laki</option><option>Perempuan</option></select>
             </div>
@@ -241,7 +253,8 @@
         <div><label class="ui-label">Jenis Kelamin</label><select id="mp-jk" class="ui-input"><option>Laki-Laki</option><option>Perempuan</option></select></div>
         <div><label class="ui-label">Jenis Diklat</label><input id="mp-jenis" class="ui-input" /></div>
         <div><label class="ui-label">Nama Diklat</label><input id="mp-namadiklat" class="ui-input" /></div>
-        <div><label class="ui-label">Angkt/Kelas</label><input id="mp-angk" class="ui-input" /></div>
+        <div><label class="ui-label">Angkatan</label><input id="mp-angk" class="ui-input" placeholder="mis. ANGKATAN 33" /></div>
+        <div><label class="ui-label">Kelas</label><input id="mp-kelas" class="ui-input" placeholder="mis. KELAS 4B" /></div>
         <div><label class="ui-label">Status</label><select id="mp-status" class="ui-input"><option>LULUS</option><option>DIKLAT</option><option>TIDAK LULUS</option></select></div>
       </div>
       <div class="ui-modal-actions">

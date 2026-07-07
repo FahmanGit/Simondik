@@ -2,8 +2,20 @@ import { sb } from "../supabaseClient.js";
 import { $, $$, escapeHtml, openModal, closeModal, toast } from "../ui.js";
 import { canWrite, logActivity } from "../auth.js";
 
-const TEMPLATE_HEADERS = ["NIT/NIK", "JENIS DIKLAT", "NAMA PESERTA", "NAMA DIKLAT", "ANGKT/KELAS", "STATUS", "JENIS KELAMIN"];
+const TEMPLATE_HEADERS = ["NIT/NIK", "JENIS DIKLAT", "NAMA PESERTA", "NAMA DIKLAT", "ANGKATAN", "KELAS", "STATUS", "JENIS KELAMIN"];
 let cache = []; // seluruh peserta (untuk isi filter)
+
+// Ambil angkatan/kelas dengan fallback ke kolom lama "angkatan_kelas" (dipecah dengan '/').
+function getAngkatan(p) {
+  if (p.angkatan) return p.angkatan;
+  const s = String(p.angkatan_kelas || "");
+  return s.includes("/") ? s.split("/")[0].trim() : s.trim();
+}
+function getKelas(p) {
+  if (p.kelas) return p.kelas;
+  const s = String(p.angkatan_kelas || "");
+  return s.includes("/") ? s.split("/").slice(1).join("/").trim() : "";
+}
 
 const badge = (s) =>
   s === "LULUS" ? '<span class="badge badge-lulus">LULUS</span>'
@@ -54,16 +66,19 @@ function fillFilters() {
   };
   set("#f-jenis", uniq(cache.map((p) => p.jenis_diklat)), "Semua Diklat");
   set("#f-nama", uniq(cache.map((p) => p.nama_diklat)), "Semua Nama");
-  set("#f-angk", uniq(cache.map((p) => p.angkatan_kelas)), "Semua ANGKT/KLS");
+  set("#f-angk", uniq(cache.map(getAngkatan)), "Semua Angkatan");
+  set("#f-kelas", uniq(cache.map(getKelas)), "Semua Kelas");
 }
 
 function filtered() {
-  const jenis = $("#f-jenis").value, nama = $("#f-nama").value, angk = $("#f-angk").value,
+  const jenis = $("#f-jenis").value, nama = $("#f-nama").value,
+        angk = $("#f-angk").value, kelas = $("#f-kelas").value,
         status = $("#f-status").value, jk = $("#f-jk").value;
   return cache.filter((p) =>
     (!jenis || p.jenis_diklat === jenis) &&
     (!nama || p.nama_diklat === nama) &&
-    (!angk || p.angkatan_kelas === angk) &&
+    (!angk || getAngkatan(p) === angk) &&
+    (!kelas || getKelas(p) === kelas) &&
     (!status || p.status === status) &&
     (!jk || p.jenis_kelamin === jk));
 }
@@ -76,7 +91,8 @@ function renderTable() {
       <td>${escapeHtml(p.nit_nik || "-")}</td>
       <td class="font-medium">${escapeHtml(p.nama_peserta)}</td>
       <td>${escapeHtml(p.nama_diklat)}</td>
-      <td>${escapeHtml(p.angkatan_kelas || "-")}</td>
+      <td>${escapeHtml(getAngkatan(p) || "-")}</td>
+      <td>${escapeHtml(getKelas(p) || "-")}</td>
       <td>${badge(p.status)}</td>
       <td>${escapeHtml(p.jenis_kelamin || "-")}</td>
       ${admin ? `<td class="text-right whitespace-nowrap">
@@ -87,10 +103,10 @@ function renderTable() {
   $("#peserta-table").innerHTML = `
     <table class="ui-table">
       <thead><tr>
-        <th>NIT/NIK</th><th>Nama Peserta</th><th>Nama Diklat</th><th>Angk/Kelas</th>
+        <th>NIT/NIK</th><th>Nama Peserta</th><th>Nama Diklat</th><th>Angkatan</th><th>Kelas</th>
         <th>Status</th><th>Jenis Kelamin</th>${admin ? "<th class='text-right'>Aksi</th>" : ""}
       </tr></thead>
-      <tbody>${body || `<tr><td colspan="7" class="py-8 text-center text-muted-foreground">Belum ada data.</td></tr>`}</tbody>
+      <tbody>${body || `<tr><td colspan="8" class="py-8 text-center text-muted-foreground">Belum ada data.</td></tr>`}</tbody>
     </table>`;
 }
 
@@ -110,9 +126,9 @@ async function downloadTemplate() {
   const dd = wb.addWorksheet("DROPDOWN");
 
   // --- Isi sheet TEMPLATE: header + 1 baris contoh ---
-  // Kolom: A=NIT/NIK, B=Jenis Diklat, C=Nama Peserta, D=Nama Diklat, E=Angk/Kelas, F=Status, G=Jenis Kelamin
+  // Kolom: A=NIT/NIK, B=Jenis Diklat, C=Nama Peserta, D=Nama Diklat, E=Angkatan, F=Kelas, G=Status, H=Jenis Kelamin
   ws.addRow(TEMPLATE_HEADERS);
-  ws.addRow(["30322001", "Pembentukan", "FAHMI", "DIPLOMA IV NAUTIKA", "ANGKATAN 33/KELAS 4B", "Diklat", "Laki-Laki"]);
+  ws.addRow(["30322001", "Pembentukan", "FAHMI", "DIPLOMA IV NAUTIKA", "ANGKATAN 33", "KELAS 4B", "Diklat", "Laki-Laki"]);
 
   // --- Kop tabel: hijau muda + teks hitam tebal + border tipis (mirip contoh) ---
   ws.getRow(1).eachCell((cell) => {
@@ -126,7 +142,7 @@ async function downloadTemplate() {
       right: { style: "thin", color: { argb: "FF000000" } },
     };
   });
-  [16, 21, 33, 32.5, 24, 21, 19.7].forEach((w, i) => (ws.getColumn(i + 1).width = w));
+  [16, 21, 33, 32.5, 16, 14, 21, 19.7].forEach((w, i) => (ws.getColumn(i + 1).width = w));
 
   // --- Sheet DROPDOWN: sumber pilihan (tata letak mengikuti contoh: C12:E20) ---
   dd.getCell("C12").value = "JENIS DIKLAT";
@@ -138,7 +154,7 @@ async function downloadTemplate() {
   OPT_JK.forEach((v, i) => (dd.getCell("E" + (13 + i)).value = v));
   dd.getColumn(3).width = 21.3; dd.getColumn(4).width = 14; dd.getColumn(5).width = 16;
 
-  // --- Dropdown (data validation): Jenis Diklat (B), Status (F), Jenis Kelamin (G) ---
+  // --- Dropdown (data validation): Jenis Diklat (B), Status (G), Jenis Kelamin (H) ---
   const jEnd = 13 + OPT_JENIS.length - 1;   // 20
   const sEnd = 13 + OPT_STATUS.length - 1;  // 15
   const kEnd = 13 + OPT_JK.length - 1;      // 14
@@ -149,8 +165,8 @@ async function downloadTemplate() {
   });
   for (let r = 2; r <= 1000; r++) {
     ws.getCell("B" + r).dataValidation = dv(`DROPDOWN!$C$13:$C$${jEnd}`);
-    ws.getCell("F" + r).dataValidation = dv(`DROPDOWN!$D$13:$D$${sEnd}`);
-    ws.getCell("G" + r).dataValidation = dv(`DROPDOWN!$E$13:$E$${kEnd}`);
+    ws.getCell("G" + r).dataValidation = dv(`DROPDOWN!$D$13:$D$${sEnd}`);
+    ws.getCell("H" + r).dataValidation = dv(`DROPDOWN!$E$13:$E$${kEnd}`);
   }
 
   // --- Unduh ---
@@ -193,12 +209,23 @@ async function importFromFile(file) {
       const namaDiklat  = pick(r, "NAMA DIKLAT", "Nama Diklat", "nama_diklat");
       // baris tanpa nama peserta / jenis / nama diklat dianggap kosong → dilewati
       if (!namaPeserta || !jenisDiklat || !namaDiklat) return null;
+
+      // Angkatan & Kelas: baca kolom terpisah; jika hanya ada kolom gabungan lama, pecah dengan '/'.
+      let angkatan = pick(r, "ANGKATAN", "Angkatan", "angkatan");
+      let kelas    = pick(r, "KELAS", "Kelas", "kelas");
+      if (!angkatan && !kelas) {
+        const gab = pick(r, "ANGKT/KELAS", "ANGKATAN/KELAS", "Angkt/Kelas", "angkatan_kelas");
+        if (gab.includes("/")) { angkatan = gab.split("/")[0].trim(); kelas = gab.split("/").slice(1).join("/").trim(); }
+        else angkatan = gab;
+      }
+
       return {
         nit_nik: pick(r, "NIT/NIK", "NIT", "NIK", "nit_nik") || null,
         nama_peserta: namaPeserta,
         jenis_diklat: jenisDiklat,
         nama_diklat: namaDiklat,
-        angkatan_kelas: pick(r, "ANGKT/KELAS", "ANGKATAN/KELAS", "Angkt/Kelas", "angkatan_kelas") || null,
+        angkatan: angkatan || null,
+        kelas: kelas || null,
         status: normStatus(pick(r, "STATUS", "Status")),
         jenis_kelamin: normJK(pick(r, "JENIS KELAMIN", "Jenis Kelamin", "jenis_kelamin")),
       };
@@ -258,7 +285,8 @@ function openEdit(id) {
   const p = cache.find((x) => x.id === id); if (!p) return;
   $("#mp-id").value = p.id; $("#mp-nama").value = p.nama_peserta || ""; $("#mp-nit").value = p.nit_nik || "";
   $("#mp-jk").value = p.jenis_kelamin || "Laki-Laki"; $("#mp-jenis").value = p.jenis_diklat || "";
-  $("#mp-namadiklat").value = p.nama_diklat || ""; $("#mp-angk").value = p.angkatan_kelas || "";
+  $("#mp-namadiklat").value = p.nama_diklat || ""; $("#mp-angk").value = getAngkatan(p) || "";
+  $("#mp-kelas").value = getKelas(p) || "";
   $("#mp-status").value = p.status || "DIKLAT";
   $("#mp-title").textContent = "Edit Peserta";
   openModal("modal-peserta");
@@ -268,7 +296,9 @@ async function submitEdit() {
   const payload = {
     nama_peserta: $("#mp-nama").value.trim(), nit_nik: $("#mp-nit").value.trim() || null,
     jenis_kelamin: $("#mp-jk").value, jenis_diklat: $("#mp-jenis").value.trim(),
-    nama_diklat: $("#mp-namadiklat").value.trim(), angkatan_kelas: $("#mp-angk").value.trim(),
+    nama_diklat: $("#mp-namadiklat").value.trim(),
+    angkatan: $("#mp-angk").value.trim() || null,
+    kelas: $("#mp-kelas").value.trim() || null,
     status: $("#mp-status").value,
   };
   if (!payload.nama_peserta) return toast("Nama peserta wajib diisi.", "warn");
@@ -288,7 +318,7 @@ async function deleteRow(id) {
 
 // ---------------------------------------------------------------- init
 export function initPeserta() {
-  ["#f-jenis", "#f-nama", "#f-angk", "#f-status", "#f-jk"].forEach((id) => $(id).addEventListener("change", renderTable));
+  ["#f-jenis", "#f-nama", "#f-angk", "#f-kelas", "#f-status", "#f-jk"].forEach((id) => $(id).addEventListener("change", renderTable));
   $("#btn-template").addEventListener("click", downloadTemplate);
   // Import langsung: klik tombol → buka pemilih file → proses.
   $("#btn-import").addEventListener("click", () => {

@@ -2,7 +2,7 @@ import { sb } from "../supabaseClient.js";
 import { $, escapeHtml, toast } from "../ui.js";
 import { canWrite, logActivity } from "../auth.js";
 
-let barChart = null, pieChart = null, all = [], targets = {};
+let barChart = null, pieChart = null, all = [], view = [], targets = {};
 const PALETTE = ["#22c55e", "#f59e0b", "#8b5cf6", "#3b82f6", "#ef4444", "#ec4899", "#14b8a6", "#6366f1"];
 
 // 8 jenis diklat tetap untuk kartu dashboard. Tiap jenis punya:
@@ -20,6 +20,19 @@ const JENIS_CARDS = [
   { label: "Diklat Kepegawaian", icon: "fa-book-open",      aliases: ["diklat kepegawaian", "kepegawaian"] },
 ];
 
+// Ambil angkatan/kelas dengan fallback ke kolom lama "angkatan_kelas".
+function dAngkatan(p) {
+  if (p.angkatan) return p.angkatan;
+  const s = String(p.angkatan_kelas || "");
+  return s.includes("/") ? s.split("/")[0].trim() : s.trim();
+}
+function dKelas(p) {
+  if (p.kelas) return p.kelas;
+  const s = String(p.angkatan_kelas || "");
+  return s.includes("/") ? s.split("/").slice(1).join("/").trim() : "";
+}
+function dUniq(arr) { return [...new Set(arr.filter(Boolean))].sort(); }
+
 export async function renderDashboard() {
   const [{ data }, { data: tdata }] = await Promise.all([
     sb.from("peserta").select("*"),
@@ -36,15 +49,46 @@ export async function renderDashboard() {
     if (bulan && String(d.getMonth() + 1) !== String(bulan)) return false;
     return true;
   });
+
+  fillDashFilters();
+  applyDashFilters();
+}
+
+// Isi opsi filter dashboard dari data (tahun/bulan) tanpa menghapus pilihan aktif.
+function fillDashFilters() {
+  const set = (sel, values, allLabel) => {
+    const el = $(sel); if (!el) return;
+    const cur = el.value;
+    el.innerHTML = `<option value="">${allLabel}</option>` + values.map((v) => `<option>${v}</option>`).join("");
+    if (values.includes(cur)) el.value = cur;
+  };
+  set("#d-jenis", dUniq(all.map((p) => p.jenis_diklat)), "Semua Diklat");
+  set("#d-nama", dUniq(all.map((p) => p.nama_diklat)), "Semua Nama");
+  set("#d-angk", dUniq(all.map(dAngkatan)), "Semua Angkatan");
+  set("#d-kelas", dUniq(all.map(dKelas)), "Semua Kelas");
+}
+
+// Terapkan 6 filter dashboard → hasil ke `view`, lalu render ulang semuanya.
+function applyDashFilters() {
+  const jenis = $("#d-jenis")?.value || "", nama = $("#d-nama")?.value || "",
+        angk = $("#d-angk")?.value || "", kelas = $("#d-kelas")?.value || "",
+        status = $("#d-status")?.value || "", jk = $("#d-jk")?.value || "";
+  view = all.filter((p) =>
+    (!jenis || p.jenis_diklat === jenis) &&
+    (!nama || p.nama_diklat === nama) &&
+    (!angk || dAngkatan(p) === angk) &&
+    (!kelas || dKelas(p) === kelas) &&
+    (!status || p.status === status) &&
+    (!jk || p.jenis_kelamin === jk));
   renderCards();
   renderBar();
   renderPie();
-  renderQuick("");
+  renderQuick($("#dash-search")?.value || "");
 }
 
 // Hitung jumlah peserta untuk satu kartu (cocokkan lewat aliases).
 function countFor(card) {
-  return all.filter((p) => {
+  return view.filter((p) => {
     const j = String(p.jenis_diklat || "").trim().toLowerCase();
     return card.aliases.includes(j);
   }).length;
@@ -105,8 +149,8 @@ async function editTarget(jenis) {
 function renderBar() {
   // Realisasi per bulan (dari created_at) vs target contoh (placeholder).
   const real = Array(12).fill(0);
-  for (const p of all) { const m = new Date(p.created_at).getMonth(); if (m >= 0 && m < 12) real[m]++; }
-  const target = real.map((v, i) => Math.max(v, Math.round((i + 1) * (all.length / 12) * 1.2))); // contoh
+  for (const p of view) { const m = new Date(p.created_at).getMonth(); if (m >= 0 && m < 12) real[m]++; }
+  const target = real.map((v, i) => Math.max(v, Math.round((i + 1) * (view.length / 12) * 1.2))); // contoh
   const labels = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
   barChart?.destroy();
   barChart = new Chart($("#chart-bar"), {
@@ -120,7 +164,7 @@ function renderBar() {
 }
 
 function renderPie() {
-  const g = groupBy(all, "jenis_diklat");
+  const g = groupBy(view, "jenis_diklat");
   const labels = [...g.keys()], data = [...g.values()];
   pieChart?.destroy();
   pieChart = new Chart($("#chart-pie"), {
@@ -132,24 +176,26 @@ function renderPie() {
 
 function renderQuick(q) {
   const term = q.trim().toLowerCase();
-  const rows = all
+  const rows = view
     .filter((p) => !term || (p.nama_peserta || "").toLowerCase().includes(term) || (p.nit_nik || "").toLowerCase().includes(term))
     .slice(0, 12);
   const badge = (s) => s === "LULUS" ? '<span class="badge badge-lulus">LULUS</span>'
     : s === "TIDAK LULUS" ? '<span class="badge badge-tidak">TIDAK LULUS</span>' : '<span class="badge badge-diklat">DIKLAT</span>';
   $("#dash-table").innerHTML = `
     <table class="ui-table">
-      <thead><tr><th>NIT/NIK</th><th>Nama Peserta</th><th>Nama Diklat</th><th>Angk/Kelas</th><th>Status</th><th>Jenis Kelamin</th></tr></thead>
+      <thead><tr><th>NIT/NIK</th><th>Nama Peserta</th><th>Nama Diklat</th><th>Angkatan</th><th>Kelas</th><th>Status</th><th>Jenis Kelamin</th></tr></thead>
       <tbody>${rows.map((p) => `<tr>
         <td>${escapeHtml(p.nit_nik || "-")}</td><td class="font-medium">${escapeHtml(p.nama_peserta)}</td>
-        <td>${escapeHtml(p.nama_diklat)}</td><td>${escapeHtml(p.angkatan_kelas || "-")}</td>
+        <td>${escapeHtml(p.nama_diklat)}</td><td>${escapeHtml(dAngkatan(p) || "-")}</td><td>${escapeHtml(dKelas(p) || "-")}</td>
         <td>${badge(p.status)}</td><td>${escapeHtml(p.jenis_kelamin || "-")}</td></tr>`).join("")
-        || `<tr><td colspan="6" class="py-8 text-center text-muted-foreground">Belum ada data.</td></tr>`}</tbody>
+        || `<tr><td colspan="7" class="py-8 text-center text-muted-foreground">Belum ada data.</td></tr>`}</tbody>
     </table>`;
 }
 
 export function initDashboard() {
   $("#dash-search").addEventListener("input", (e) => renderQuick(e.target.value));
+  ["#d-jenis", "#d-nama", "#d-angk", "#d-kelas", "#d-status", "#d-jk"].forEach((id) =>
+    $(id)?.addEventListener("change", applyDashFilters));
   $("#dash-cards").addEventListener("click", (e) => {
     const btn = e.target.closest(".dash-edit-target");
     if (btn) editTarget(btn.getAttribute("data-jenis"));
