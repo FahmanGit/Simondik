@@ -62,20 +62,23 @@ function renderCards() {
     const jml = countFor(card);
     const tgt = targets[card.label] ?? 0;
     const color = PALETTE[i % PALETTE.length];
+    const pct = tgt > 0 ? Math.min(100, Math.round((jml / tgt) * 100)) : 0;
+    const full = tgt > 0 && jml >= tgt;
     const editBtn = admin
-      ? `<button class="dash-edit-target text-xs text-primary hover:underline" data-jenis="${escapeHtml(card.label)}" title="Ubah target"><i class="fa-solid fa-pen-to-square"></i></button>`
+      ? `<button class="dash-edit-target" data-jenis="${escapeHtml(card.label)}" title="Ubah target"><i class="fa-solid fa-pen-to-square"></i></button>`
       : "";
     return `
       <div class="stat-card">
-        <div class="flex items-start justify-between">
-          <p class="text-sm text-muted-foreground">Total Peserta ${escapeHtml(card.label)}</p>
-          <span class="stat-icon" style="background:${color}22;color:${color}"><i class="fa-solid ${card.icon}"></i></span>
+        <div class="flex items-start justify-between gap-2">
+          <p class="label">Total Peserta ${escapeHtml(card.label)}</p>
+          <span class="stat-icon" style="background:${color}1f;color:${color}"><i class="fa-solid ${card.icon}"></i></span>
         </div>
-        <p class="val">${jml.toLocaleString("id-ID")} <span class="text-base font-medium text-muted-foreground">Peserta</span></p>
-        <p class="flex items-center gap-2 text-xs text-muted-foreground">
-          <span>Target Peserta ${escapeHtml(card.label)} = ${tgt.toLocaleString("id-ID")}</span>
-          ${editBtn}
-        </p>
+        <p class="val">${jml.toLocaleString("id-ID")} <small>Peserta</small></p>
+        <div class="stat-progress ${full ? "is-full" : ""}"><span style="width:${pct}%"></span></div>
+        <div class="stat-target">
+          <span>Target ${tgt.toLocaleString("id-ID")}${editBtn}</span>
+          <span class="pct">${tgt > 0 ? pct + "%" : "—"}</span>
+        </div>
       </div>`;
   }).join("");
 }
