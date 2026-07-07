@@ -163,58 +163,58 @@ async function downloadTemplate() {
   URL.revokeObjectURL(url);
 }
 
-// ---------------------------------------------------------------- IMPORT (auto-tag)
-async function submitImport() {
-  const jenis = $("#imp-jenis").value.trim();
-  const nama = $("#imp-nama").value.trim();
-  const angk = $("#imp-angk").value.trim();
-  const file = $("#imp-file").files[0];
-  if (!jenis || !nama) return toast("Jenis Diklat dan Nama Diklat wajib diisi.", "warn");
-  if (!file) return toast("Pilih file Excel terlebih dahulu.", "warn");
+// ---------------------------------------------------------------- IMPORT (langsung, tanpa modal)
+// Semua kolom dibaca per baris dari file Excel dan dipetakan ke kolom database.
+// Tidak ada form auto-tag: Jenis Diklat, Nama Diklat, Angkatan diambil dari isi file.
+async function importFromFile(file) {
+  if (!file) return;
 
-  const buf = await file.arrayBuffer();
-  const wb = XLSX.read(buf, { type: "array" });
-  const sheet = wb.Sheets[wb.SheetNames[0]];
-  const raw = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+  let raw;
+  try {
+    const buf = await file.arrayBuffer();
+    const wb = XLSX.read(buf, { type: "array" });
+    const sheet = wb.Sheets[wb.SheetNames[0]];
+    raw = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+  } catch {
+    return toast("File tidak dapat dibaca. Pastikan format .xlsx.", "err");
+  }
 
-  // AUTO-TAG: jenis/nama/angk dari FORM diterapkan ke SEMUA baris.
+  const pick = (r, ...keys) => {
+    for (const k of keys) {
+      if (r[k] !== undefined && String(r[k]).trim() !== "") return String(r[k]).trim();
+    }
+    return "";
+  };
+
   const rows = raw
     .map((r) => {
-      const namaPeserta = String(r["NAMA PESERTA"] ?? r["Nama Peserta"] ?? r["nama_peserta"] ?? "").trim();
-      if (!namaPeserta) return null;
+      const namaPeserta = pick(r, "NAMA PESERTA", "Nama Peserta", "nama_peserta");
+      const jenisDiklat = pick(r, "JENIS DIKLAT", "Jenis Diklat", "jenis_diklat");
+      const namaDiklat  = pick(r, "NAMA DIKLAT", "Nama Diklat", "nama_diklat");
+      // baris tanpa nama peserta / jenis / nama diklat dianggap kosong → dilewati
+      if (!namaPeserta || !jenisDiklat || !namaDiklat) return null;
       return {
-        nit_nik: String(r["NIT/NIK"] ?? r["NIT"] ?? "").trim() || null,
+        nit_nik: pick(r, "NIT/NIK", "NIT", "NIK", "nit_nik") || null,
         nama_peserta: namaPeserta,
-        jenis_kelamin: normJK(r["JENIS KELAMIN"] ?? r["Jenis Kelamin"]),
-        jenis_diklat: jenis,   // ← dari form
-        nama_diklat: nama,     // ← dari form
-        angkatan_kelas: angk,  // ← dari form
-        status: normStatus(r["STATUS"] ?? r["Status"]),
+        jenis_diklat: jenisDiklat,
+        nama_diklat: namaDiklat,
+        angkatan_kelas: pick(r, "ANGKT/KELAS", "ANGKATAN/KELAS", "Angkt/Kelas", "angkatan_kelas") || null,
+        status: normStatus(pick(r, "STATUS", "Status")),
+        jenis_kelamin: normJK(pick(r, "JENIS KELAMIN", "Jenis Kelamin", "jenis_kelamin")),
       };
     })
     .filter(Boolean);
 
-  if (!rows.length) return toast("Tidak ada baris valid pada file.", "warn");
+  if (!rows.length) {
+    return toast("Tidak ada baris valid. Pastikan kolom Nama Peserta, Jenis Diklat, dan Nama Diklat terisi.", "warn");
+  }
 
   const { error } = await sb.from("peserta").insert(rows);
   if (error) return toast(error.message, "err");
-  await logActivity("import", `data diklat ${jenis} ${nama} ${angk} import ${rows.length} orang`);
-  closeModal("modal-import");
-  $("#imp-file").value = "";
+  await logActivity("import", `import ${rows.length} peserta dari file ${file.name}`);
   toast(`${rows.length} peserta berhasil diimpor.`);
   renderPeserta();
 }
-
-// live info jumlah baris file
-document.addEventListener("change", async (e) => {
-  if (e.target.id !== "imp-file") return;
-  const f = e.target.files[0]; if (!f) return ($("#imp-info").textContent = "");
-  try {
-    const wb = XLSX.read(await f.arrayBuffer(), { type: "array" });
-    const n = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: "" }).length;
-    $("#imp-info").textContent = `${n} baris terdeteksi. Semua akan ditandai sesuai form di atas.`;
-  } catch { $("#imp-info").textContent = "File tidak dapat dibaca."; }
-});
 
 // ---------------------------------------------------------------- HAPUS (select-all)
 function openDelete() {
@@ -290,8 +290,24 @@ async function deleteRow(id) {
 export function initPeserta() {
   ["#f-jenis", "#f-nama", "#f-angk", "#f-status", "#f-jk"].forEach((id) => $(id).addEventListener("change", renderTable));
   $("#btn-template").addEventListener("click", downloadTemplate);
-  $("#btn-import").addEventListener("click", () => openModal("modal-import"));
-  $("#imp-submit").addEventListener("click", submitImport);
+  // Import langsung: klik tombol → buka pemilih file → proses.
+  $("#btn-import").addEventListener("click", () => {
+    let picker = document.getElementById("imp-file-hidden");
+    if (!picker) {
+      picker = document.createElement("input");
+      picker.type = "file";
+      picker.accept = ".xlsx,.xls";
+      picker.id = "imp-file-hidden";
+      picker.style.display = "none";
+      picker.addEventListener("change", async (e) => {
+        const file = e.target.files[0];
+        e.target.value = ""; // reset agar file sama bisa dipilih lagi
+        if (file) await importFromFile(file);
+      });
+      document.body.appendChild(picker);
+    }
+    picker.click();
+  });
   $("#btn-hapus-semua").addEventListener("click", openDelete);
   $("#del-jenis").addEventListener("change", onDelJenisChange);
   $("#del-all").addEventListener("change", (e) => $$(".del-cb").forEach((c) => (c.checked = e.target.checked)));

@@ -20,6 +20,8 @@ function fillPeriode() {
 function applyRole() {
   $$("[data-admin]").forEach((el) => el.classList.toggle("hidden", !isAdmin()));
   $$("[data-write]").forEach((el) => el.classList.toggle("hidden", !canWrite()));
+  // Aksi modul Peserta (import/tambah/edit/hapus) terbuka untuk SEMUA user yang login.
+  $$("[data-peserta]").forEach((el) => el.classList.toggle("hidden", !me));
 }
 
 function showApp() {
@@ -32,6 +34,16 @@ function showApp() {
 function showLogin() {
   $("#app").classList.add("hidden");
   $("#login-screen").classList.remove("hidden");
+}
+
+// Drawer sidebar untuk layar kecil.
+function openSidebar() {
+  $("#sidebar").classList.add("open");
+  $("#sidebar-overlay").classList.remove("hidden");
+}
+function closeSidebar() {
+  $("#sidebar").classList.remove("open");
+  $("#sidebar-overlay").classList.add("hidden");
 }
 
 async function boot() {
@@ -63,6 +75,11 @@ async function boot() {
 
   // Logout.
   $("#btn-logout").addEventListener("click", async () => { await logout(); showLogin(); });
+
+  // Drawer sidebar (mobile).
+  $("#btn-menu")?.addEventListener("click", openSidebar);
+  $("#sidebar-overlay")?.addEventListener("click", closeSidebar);
+  $$(".nav-link").forEach((a) => a.addEventListener("click", closeSidebar));
 
   // Sesi tersimpan?
   await loadProfile();
