@@ -2,7 +2,7 @@ import { sb } from "../supabaseClient.js";
 import { $, $$, escapeHtml, openModal, closeModal, toast } from "../ui.js";
 import { canWrite, logActivity } from "../auth.js";
 
-const TEMPLATE_HEADERS = ["JENIS DIKLAT", "NAMA PESERTA", "NAMA DIKLAT", "ANGKT/KELAS", "STATUS", "JENIS KELAMIN"];
+const TEMPLATE_HEADERS = ["NIT/NIK", "JENIS DIKLAT", "NAMA PESERTA", "NAMA DIKLAT", "ANGKT/KELAS", "STATUS", "JENIS KELAMIN"];
 let cache = []; // seluruh peserta (untuk isi filter)
 
 const badge = (s) =>
@@ -110,8 +110,9 @@ async function downloadTemplate() {
   const dd = wb.addWorksheet("DROPDOWN");
 
   // --- Isi sheet TEMPLATE: header + 1 baris contoh ---
+  // Kolom: A=NIT/NIK, B=Jenis Diklat, C=Nama Peserta, D=Nama Diklat, E=Angk/Kelas, F=Status, G=Jenis Kelamin
   ws.addRow(TEMPLATE_HEADERS);
-  ws.addRow(["Pembentukan", "FAHMI", "DIPLOMA IV NAUTIKA", "ANGKATAN 33/KELAS 4B", "Diklat", "Laki-Laki"]);
+  ws.addRow(["30322001", "Pembentukan", "FAHMI", "DIPLOMA IV NAUTIKA", "ANGKATAN 33/KELAS 4B", "Diklat", "Laki-Laki"]);
 
   // --- Kop tabel: hijau muda + teks hitam tebal + border tipis (mirip contoh) ---
   ws.getRow(1).eachCell((cell) => {
@@ -125,7 +126,7 @@ async function downloadTemplate() {
       right: { style: "thin", color: { argb: "FF000000" } },
     };
   });
-  [21, 33, 32.5, 34.3, 21, 19.7].forEach((w, i) => (ws.getColumn(i + 1).width = w));
+  [16, 21, 33, 32.5, 24, 21, 19.7].forEach((w, i) => (ws.getColumn(i + 1).width = w));
 
   // --- Sheet DROPDOWN: sumber pilihan (tata letak mengikuti contoh: C12:E20) ---
   dd.getCell("C12").value = "JENIS DIKLAT";
@@ -137,7 +138,7 @@ async function downloadTemplate() {
   OPT_JK.forEach((v, i) => (dd.getCell("E" + (13 + i)).value = v));
   dd.getColumn(3).width = 21.3; dd.getColumn(4).width = 14; dd.getColumn(5).width = 16;
 
-  // --- Dropdown (data validation) untuk Jenis Diklat (A), Status (E), Jenis Kelamin (F) ---
+  // --- Dropdown (data validation): Jenis Diklat (B), Status (F), Jenis Kelamin (G) ---
   const jEnd = 13 + OPT_JENIS.length - 1;   // 20
   const sEnd = 13 + OPT_STATUS.length - 1;  // 15
   const kEnd = 13 + OPT_JK.length - 1;      // 14
@@ -147,9 +148,9 @@ async function downloadTemplate() {
     errorTitle: "Input tidak valid", error: "Silakan pilih nilai dari daftar dropdown.",
   });
   for (let r = 2; r <= 1000; r++) {
-    ws.getCell("A" + r).dataValidation = dv(`DROPDOWN!$C$13:$C$${jEnd}`);
-    ws.getCell("E" + r).dataValidation = dv(`DROPDOWN!$D$13:$D$${sEnd}`);
-    ws.getCell("F" + r).dataValidation = dv(`DROPDOWN!$E$13:$E$${kEnd}`);
+    ws.getCell("B" + r).dataValidation = dv(`DROPDOWN!$C$13:$C$${jEnd}`);
+    ws.getCell("F" + r).dataValidation = dv(`DROPDOWN!$D$13:$D$${sEnd}`);
+    ws.getCell("G" + r).dataValidation = dv(`DROPDOWN!$E$13:$E$${kEnd}`);
   }
 
   // --- Unduh ---
