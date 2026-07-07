@@ -1,17 +1,33 @@
 import { sb } from "../supabaseClient.js";
-import { $, escapeHtml } from "../ui.js";
+import { $, escapeHtml, toast } from "../ui.js";
+import { canWrite, logActivity } from "../auth.js";
 
-let barChart = null, pieChart = null, all = [];
+let barChart = null, pieChart = null, all = [], targets = {};
 const PALETTE = ["#22c55e", "#f59e0b", "#8b5cf6", "#3b82f6", "#ef4444", "#ec4899", "#14b8a6", "#6366f1"];
 
-const ICONS = {
-  Pembentukan: "fa-graduation-cap", Peningkatan: "fa-arrow-trend-up", Pemutakhiran: "fa-rotate",
-  "Diklat Teknis": "fa-microchip", Revalidasi: "fa-award", DPM: "fa-shield-halved",
-  "Diklat Kerjasama": "fa-people-group", "Diklat Kepegawaian": "fa-book-open",
-};
+// 8 jenis diklat tetap untuk kartu dashboard. Tiap jenis punya:
+//  - label   : nama yang tampil di kartu
+//  - icon    : ikon FontAwesome
+//  - aliases : variasi penulisan jenis_diklat pada data peserta yang dianggap sama
+const JENIS_CARDS = [
+  { label: "Pembentukan",        icon: "fa-graduation-cap", aliases: ["pembentukan"] },
+  { label: "Peningkatan",        icon: "fa-arrow-trend-up", aliases: ["peningkatan", "penjenjangan"] },
+  { label: "Pemutakhiran",       icon: "fa-rotate",         aliases: ["pemutakhiran"] },
+  { label: "Diklat Teknis",      icon: "fa-microchip",      aliases: ["diklat teknis", "teknis"] },
+  { label: "Revalidasi",         icon: "fa-award",          aliases: ["revalidasi"] },
+  { label: "DPM",                icon: "fa-shield-halved",  aliases: ["dpm"] },
+  { label: "Diklat Kerjasama",   icon: "fa-people-group",   aliases: ["diklat kerjasama", "kerjasama", "kerjasama (non stcw)"] },
+  { label: "Diklat Kepegawaian", icon: "fa-book-open",      aliases: ["diklat kepegawaian", "kepegawaian"] },
+];
 
 export async function renderDashboard() {
-  const { data } = await sb.from("peserta").select("*");
+  const [{ data }, { data: tdata }] = await Promise.all([
+    sb.from("peserta").select("*"),
+    sb.from("diklat_targets").select("*"),
+  ]);
+  targets = {};
+  (tdata || []).forEach((t) => (targets[t.jenis_diklat] = t.target));
+
   const tahun = $("#filter-tahun")?.value;
   const bulan = $("#filter-bulan")?.value; // "" = semua
   all = (data || []).filter((p) => {
@@ -26,6 +42,14 @@ export async function renderDashboard() {
   renderQuick("");
 }
 
+// Hitung jumlah peserta untuk satu kartu (cocokkan lewat aliases).
+function countFor(card) {
+  return all.filter((p) => {
+    const j = String(p.jenis_diklat || "").trim().toLowerCase();
+    return card.aliases.includes(j);
+  }).length;
+}
+
 function groupBy(arr, key) {
   const m = new Map();
   for (const x of arr) { const k = x[key] || "Lainnya"; m.set(k, (m.get(k) || 0) + 1); }
@@ -33,19 +57,46 @@ function groupBy(arr, key) {
 }
 
 function renderCards() {
-  const g = groupBy(all, "jenis_diklat");
-  const entries = [...g.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8);
-  $("#dash-cards").innerHTML = entries.map(([nama, jml], i) => {
-    const icon = ICONS[nama] || "fa-users";
+  const admin = canWrite();
+  $("#dash-cards").innerHTML = JENIS_CARDS.map((card, i) => {
+    const jml = countFor(card);
+    const tgt = targets[card.label] ?? 0;
+    const color = PALETTE[i % PALETTE.length];
+    const editBtn = admin
+      ? `<button class="dash-edit-target text-xs text-primary hover:underline" data-jenis="${escapeHtml(card.label)}" title="Ubah target"><i class="fa-solid fa-pen-to-square"></i></button>`
+      : "";
     return `
       <div class="stat-card">
         <div class="flex items-start justify-between">
-          <p class="text-sm text-muted-foreground">Total Peserta ${escapeHtml(nama)}</p>
-          <span class="stat-icon" style="background:${PALETTE[i % PALETTE.length]}22;color:${PALETTE[i % PALETTE.length]}"><i class="fa-solid ${icon}"></i></span>
+          <p class="text-sm text-muted-foreground">Total Peserta ${escapeHtml(card.label)}</p>
+          <span class="stat-icon" style="background:${color}22;color:${color}"><i class="fa-solid ${card.icon}"></i></span>
         </div>
         <p class="val">${jml.toLocaleString("id-ID")} <span class="text-base font-medium text-muted-foreground">Peserta</span></p>
+        <p class="flex items-center gap-2 text-xs text-muted-foreground">
+          <span>Target Peserta ${escapeHtml(card.label)} = ${tgt.toLocaleString("id-ID")}</span>
+          ${editBtn}
+        </p>
       </div>`;
-  }).join("") || `<p class="text-muted-foreground">Belum ada data peserta.</p>`;
+  }).join("");
+}
+
+// Edit target: klik ikon pensil → prompt angka baru → simpan ke DB.
+async function editTarget(jenis) {
+  const current = targets[jenis] ?? 0;
+  const input = prompt(`Target peserta untuk "${jenis}":`, String(current));
+  if (input === null) return; // batal
+  const val = parseInt(String(input).replace(/[^\d]/g, ""), 10);
+  if (isNaN(val) || val < 0) return toast("Masukkan angka yang valid.", "warn");
+
+  const { error } = await sb
+    .from("diklat_targets")
+    .upsert({ jenis_diklat: jenis, target: val, updated_at: new Date().toISOString() }, { onConflict: "jenis_diklat" });
+  if (error) return toast(error.message, "err");
+
+  targets[jenis] = val;
+  await logActivity("edit", `ubah target ${jenis} = ${val}`);
+  toast("Target diperbarui.");
+  renderCards();
 }
 
 function renderBar() {
@@ -96,4 +147,8 @@ function renderQuick(q) {
 
 export function initDashboard() {
   $("#dash-search").addEventListener("input", (e) => renderQuick(e.target.value));
+  $("#dash-cards").addEventListener("click", (e) => {
+    const btn = e.target.closest(".dash-edit-target");
+    if (btn) editTarget(btn.getAttribute("data-jenis"));
+  });
 }
