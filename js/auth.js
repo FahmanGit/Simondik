@@ -1,9 +1,15 @@
 import { sb } from "./supabaseClient.js";
 export let me = null;
+
 export async function login(email, password) {
   const { error } = await sb.auth.signInWithPassword({ email, password });
   if (error) throw error;
   await loadProfile();
+  if (me?.status === "Nonaktif") {
+    await sb.auth.signOut();
+    me = null;
+    throw new Error("Akun Anda telah dinonaktifkan. Hubungi Admin.");
+  }
   await logActivity("login", `${me?.full_name || email} masuk ke aplikasi`);
 }
 export async function logout() {

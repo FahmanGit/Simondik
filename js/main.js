@@ -66,8 +66,16 @@ async function boot() {
 
   // Sesi tersimpan?
   await loadProfile();
-  if (me) { showApp(); initRouter("dashboard"); }
-  else showLogin();
+  if (me && me.status === "Nonaktif") {
+    await logout();
+    showLogin();
+    $("#login-error").textContent = "Akun Anda telah dinonaktifkan. Hubungi Admin.";
+    $("#login-error").classList.remove("hidden");
+  } else if (me) {
+    showApp(); initRouter("dashboard");
+  } else {
+    showLogin();
+  }
 }
 
 boot().catch((e) => { console.error(e); toast("Gagal memuat aplikasi: " + e.message, "err"); });
