@@ -1,79 +1,279 @@
 /* =====================================================================
-   E-Mondik — komponen bergaya shadcn (CSS murni, dipakai bersama Tailwind CDN)
+   E-Mondik — Sistem Monitoring Peserta Diklat (PIP Makassar)
+   Stylesheet lengkap & mandiri. Mendefinisikan seluruh layout inti
+   (login, sidebar, topbar, konten, komponen) dengan CSS murni sehingga
+   tampilan tetap rapi walau Tailwind Play CDN tidak termuat di production.
    ===================================================================== */
+
 :root {
-  --border: 214 32% 91%;
-  --background: 210 40% 98%;
-  --foreground: 222 47% 11%;
-  --muted-foreground: 215 16% 47%;
-  --primary: 221 83% 53%;
-  --success: 142 71% 45%;
+  --border: 213 27% 90%;
+  --input: 213 27% 88%;
+  --background: 210 33% 98%;
+  --foreground: 214 45% 14%;
+  --muted: 213 33% 95%;
+  --muted-foreground: 214 16% 46%;
+  --card: 0 0% 100%;
+  --primary: 214 84% 40%;
+  --primary-foreground: 0 0% 100%;
+  --accent: 174 84% 32%;
+  --success: 174 84% 32%;
   --danger: 0 72% 51%;
-  --warning: 38 92% 50%;
+  --warning: 32 95% 44%;
+
+  /* Sidebar (navy pelayaran) */
+  --sidebar: 214 60% 16%;
+  --sidebar-2: 214 55% 20%;
+  --sidebar-fg: 210 30% 88%;
+
+  --sidebar-w: 16rem;
+  --topbar-h: 4rem;
+  --radius: 0.65rem;
 }
+
 * { box-sizing: border-box; }
-body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; margin: 0; }
-
-/* ---------- Input & label ---------- */
-.ui-input {
-  width: 100%; height: 2.5rem; padding: 0 0.75rem;
-  border: 1px solid hsl(var(--border)); border-radius: 0.5rem;
-  background: #fff; font-size: 0.875rem; color: hsl(var(--foreground)); outline: none;
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  -webkit-font-smoothing: antialiased;
 }
-.ui-input:focus { border-color: hsl(var(--primary)); box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15); }
-select.ui-input { appearance: auto; cursor: pointer; }
-.ui-label { display: block; margin-bottom: 0.35rem; font-size: 0.8rem; font-weight: 500; color: hsl(var(--foreground)); }
-
-/* ---------- Tombol ---------- */
-.ui-btn-primary, .ui-btn-outline, .ui-btn-danger {
-  display: inline-flex; align-items: center; gap: 0.45rem; justify-content: center;
-  height: 2.5rem; padding: 0 0.9rem; border-radius: 0.5rem;
-  font-size: 0.875rem; font-weight: 500; cursor: pointer; border: 1px solid transparent;
-  transition: background .15s, opacity .15s; white-space: nowrap;
-}
-.ui-btn-primary { background: hsl(var(--primary)); color: #fff; }
-.ui-btn-primary:hover { background: hsl(var(--primary) / 0.9); }
-.ui-btn-outline { background: #fff; border-color: hsl(var(--border)); color: hsl(var(--foreground)); }
-.ui-btn-outline:hover { background: hsl(210 40% 96%); }
-.ui-btn-danger { background: hsl(var(--danger)); color: #fff; }
-.ui-btn-danger:hover { background: hsl(var(--danger) / 0.9); }
-button:disabled { opacity: 0.5; cursor: not-allowed; }
-
-/* ---------- Card ---------- */
-.ui-card { background: #fff; border: 1px solid hsl(var(--border)); border-radius: 0.75rem; box-shadow: 0 1px 2px rgb(0 0 0 / 0.04); }
-
-/* ---------- Sidebar nav ---------- */
-.nav-link {
-  display: flex; align-items: center; gap: 0.65rem; padding: 0.6rem 0.85rem;
-  border-radius: 0.5rem; font-size: 0.9rem; color: rgba(255,255,255,0.8); text-decoration: none;
-}
-.nav-link:hover { background: rgba(255,255,255,0.08); color: #fff; }
-.nav-link.active { background: hsl(var(--primary)); color: #fff; }
-
-/* ---------- Tabel ---------- */
-.ui-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-.ui-table th { text-align: left; padding: 0.65rem 0.75rem; color: hsl(var(--muted-foreground)); font-weight: 600; border-bottom: 1px solid hsl(var(--border)); font-size: 0.75rem; text-transform: uppercase; letter-spacing: .02em; }
-.ui-table td { padding: 0.7rem 0.75rem; border-bottom: 1px solid hsl(var(--border)); }
-.ui-table tr:hover td { background: hsl(210 40% 98%); }
-
-/* ---------- Badge status ---------- */
-.badge { display: inline-flex; padding: 0.15rem 0.6rem; border-radius: 999px; font-size: 0.72rem; font-weight: 600; }
-.badge-lulus  { background: hsl(var(--success) / 0.12); color: hsl(var(--success)); }
-.badge-diklat { background: hsl(var(--primary) / 0.12); color: hsl(var(--primary)); }
-.badge-tidak  { background: hsl(var(--danger) / 0.12); color: hsl(var(--danger)); }
-.badge-role   { background: hsl(var(--primary) / 0.10); color: hsl(var(--primary)); }
-
-/* ---------- Modal ---------- */
-.ui-modal { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; background: rgb(0 0 0 / 0.45); padding: 1rem; }
-.ui-modal-box { width: 100%; background: #fff; border-radius: 0.75rem; padding: 1.25rem 1.35rem; box-shadow: 0 20px 45px rgb(0 0 0 / 0.2); max-height: 90vh; overflow-y: auto; }
-.ui-modal-title { font-size: 1.1rem; font-weight: 700; margin: 0 0 0.75rem; }
-.ui-modal-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1.25rem; }
-
-/* ---------- Kartu statistik dashboard ---------- */
-.stat-card { background: #fff; border: 1px solid hsl(var(--border)); border-radius: 0.75rem; padding: 1.1rem 1.2rem; }
-.stat-card .val { font-size: 1.6rem; font-weight: 700; margin: 0.25rem 0; }
-.stat-icon { width: 2.25rem; height: 2.25rem; border-radius: 0.6rem; display: flex; align-items: center; justify-content: center; }
-
+.font-display { font-family: "Plus Jakarta Sans", "Inter", sans-serif; }
 .hidden { display: none !important; }
-.del-item { display: flex; align-items: center; justify-content: space-between; padding: 0.4rem 0.5rem; border-radius: 0.375rem; }
-.del-item:hover { background: hsl(210 40% 96%); }
+
+/* =====================================================================
+   LOGIN
+   ===================================================================== */
+.login-wrap {
+  position: fixed; inset: 0; z-index: 50;
+  display: grid; grid-template-columns: 1fr;
+}
+@media (min-width: 768px) {
+  .login-wrap { grid-template-columns: 1.05fr 1fr; }
+}
+.login-aside {
+  display: none;
+  position: relative;
+  flex-direction: column; justify-content: center;
+  padding: 3.5rem;
+  color: #fff;
+  background:
+    radial-gradient(1200px 500px at -10% -10%, hsl(174 84% 32% / 0.35), transparent 55%),
+    linear-gradient(160deg, hsl(214 70% 22%), hsl(214 72% 13%));
+  overflow: hidden;
+}
+@media (min-width: 768px) { .login-aside { display: flex; } }
+.login-aside::after {
+  content: ""; position: absolute; right: -80px; bottom: -80px;
+  width: 320px; height: 320px; border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.08);
+  box-shadow: 0 0 0 40px rgba(255,255,255,0.04);
+}
+.login-aside .brand {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  font-family: "Plus Jakarta Sans", sans-serif; font-weight: 800; font-size: 1.25rem;
+  margin-bottom: 3rem;
+}
+.login-aside .brand .logo {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2.25rem; height: 2.25rem; border-radius: 0.6rem;
+  background: rgba(255,255,255,0.12); backdrop-filter: blur(4px);
+}
+.login-aside .headline {
+  font-family: "Plus Jakarta Sans", sans-serif; font-weight: 800;
+  font-size: clamp(1.8rem, 3vw, 2.6rem); line-height: 1.12; margin: 0 0 1rem;
+}
+.login-aside .lead { max-width: 34ch; color: rgba(255,255,255,0.78); line-height: 1.6; margin: 0; }
+
+.login-panel { display: flex; align-items: center; justify-content: center; padding: 1.5rem; background: hsl(var(--background)); }
+.login-card { width: 100%; max-width: 24rem; }
+.logo { color: inherit; }
+
+/* =====================================================================
+   APP SHELL
+   ===================================================================== */
+.app-shell { min-height: 100vh; }
+
+/* ---------- Sidebar ---------- */
+.sidebar {
+  position: fixed; inset-block: 0; left: 0; z-index: 40;
+  width: var(--sidebar-w);
+  display: flex; flex-direction: column;
+  background: linear-gradient(180deg, hsl(var(--sidebar)), hsl(214 62% 12%));
+  color: hsl(var(--sidebar-fg));
+  border-right: 1px solid rgba(255,255,255,0.06);
+  transition: transform .25s ease;
+}
+.sidebar-brand {
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 1.15rem 1.25rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.sidebar-brand .logo {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2.4rem; height: 2.4rem; border-radius: 0.6rem; flex-shrink: 0;
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+  color: #fff; font-size: 1.05rem;
+}
+.sidebar-brand .name { font-family: "Plus Jakarta Sans", sans-serif; font-weight: 800; font-size: 1.05rem; color: #fff; line-height: 1.1; }
+.sidebar-brand .sub  { font-size: 0.72rem; color: rgba(255,255,255,0.55); }
+
+.sidebar-nav { flex: 1; overflow-y: auto; padding: 0.85rem 0.7rem; }
+.nav-section {
+  padding: 0.6rem 0.75rem 0.35rem; margin-top: 0.4rem;
+  font-size: 0.66rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+}
+.nav-link {
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.62rem 0.8rem; margin-bottom: 0.15rem;
+  border-radius: 0.55rem; font-size: 0.9rem; font-weight: 500;
+  color: rgba(255,255,255,0.78); text-decoration: none;
+  transition: background .15s, color .15s;
+}
+.nav-link i { width: 1.15rem; text-align: center; font-size: 0.95rem; opacity: 0.9; }
+.nav-link:hover { background: rgba(255,255,255,0.07); color: #fff; }
+.nav-link.active {
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(214 84% 46%));
+  color: #fff; box-shadow: 0 6px 16px -6px hsl(var(--primary) / 0.7);
+}
+.nav-link.active i { opacity: 1; }
+
+.sidebar-user {
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.85rem 1rem; border-top: 1px solid rgba(255,255,255,0.08);
+}
+.sidebar-user .avatar {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2.25rem; height: 2.25rem; border-radius: 50%; flex-shrink: 0;
+  background: rgba(255,255,255,0.14); color: #fff;
+}
+.sidebar-user p { margin: 0; }
+
+/* ---------- Overlay (drawer mobile) ---------- */
+.sidebar-overlay { position: fixed; inset: 0; z-index: 35; background: rgba(2, 12, 27, 0.55); backdrop-filter: blur(1px); }
+
+/* ---------- Main ---------- */
+.main { margin-left: var(--sidebar-w); min-height: 100vh; display: flex; flex-direction: column; }
+
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  height: var(--topbar-h);
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: 0 1.25rem;
+  background: hsl(var(--card) / 0.85); backdrop-filter: blur(8px);
+  border-bottom: 1px solid hsl(var(--border));
+}
+.topbar h2 { font-family: "Plus Jakarta Sans", sans-serif; font-weight: 800; font-size: 1.35rem; margin: 0; }
+.topbar .sub { font-size: 0.8rem; color: hsl(var(--muted-foreground)); margin: 0; }
+.btn-menu {
+  display: none;
+  width: 2.5rem; height: 2.5rem; border-radius: 0.55rem;
+  border: 1px solid hsl(var(--border)); background: #fff; color: hsl(var(--foreground));
+  cursor: pointer;
+}
+.content { padding: 1.5rem; flex: 1; }
+@media (min-width: 640px) { .content { padding: 2rem; } }
+
+/* ---------- Responsive: sidebar jadi drawer ---------- */
+@media (max-width: 1023px) {
+  .sidebar { transform: translateX(-100%); box-shadow: 0 0 60px rgba(0,0,0,0.3); }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-left: 0; }
+  .btn-menu { display: inline-flex; align-items: center; justify-content: center; }
+}
+
+/* =====================================================================
+   KOMPONEN
+   ===================================================================== */
+
+/* Input & label */
+.ui-input {
+  width: 100%; height: 2.6rem; padding: 0 0.8rem;
+  border: 1px solid hsl(var(--input)); border-radius: 0.55rem;
+  background: #fff; font-size: 0.875rem; color: hsl(var(--foreground)); outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.ui-input::placeholder { color: hsl(var(--muted-foreground) / 0.7); }
+.ui-input:focus { border-color: hsl(var(--primary)); box-shadow: 0 0 0 3px hsl(var(--primary) / 0.14); }
+select.ui-input { appearance: auto; cursor: pointer; }
+.ui-label { display: block; margin-bottom: 0.4rem; font-size: 0.8rem; font-weight: 600; color: hsl(var(--foreground)); }
+
+/* Tombol */
+.ui-btn-primary, .ui-btn-outline, .ui-btn-danger {
+  display: inline-flex; align-items: center; gap: 0.5rem; justify-content: center;
+  height: 2.6rem; padding: 0 1rem; border-radius: 0.55rem;
+  font-size: 0.875rem; font-weight: 600; cursor: pointer; border: 1px solid transparent;
+  transition: background .15s, box-shadow .15s, opacity .15s, transform .05s; white-space: nowrap;
+}
+.ui-btn-primary:active, .ui-btn-outline:active, .ui-btn-danger:active { transform: translateY(1px); }
+.ui-btn-primary { background: linear-gradient(135deg, hsl(var(--primary)), hsl(214 84% 46%)); color: #fff; box-shadow: 0 8px 18px -8px hsl(var(--primary) / 0.6); }
+.ui-btn-primary:hover { box-shadow: 0 10px 22px -8px hsl(var(--primary) / 0.75); }
+.ui-btn-outline { background: #fff; border-color: hsl(var(--border)); color: hsl(var(--foreground)); }
+.ui-btn-outline:hover { background: hsl(var(--muted)); border-color: hsl(var(--input)); }
+.ui-btn-danger { background: hsl(var(--danger)); color: #fff; box-shadow: 0 8px 18px -8px hsl(var(--danger) / 0.55); }
+.ui-btn-danger:hover { background: hsl(0 72% 46%); }
+button:disabled { opacity: 0.55; cursor: not-allowed; }
+
+/* Card */
+.ui-card {
+  background: hsl(var(--card)); border: 1px solid hsl(var(--border));
+  border-radius: var(--radius); box-shadow: 0 1px 3px rgb(15 30 60 / 0.05);
+}
+
+/* Tabel */
+.ui-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.ui-table th {
+  text-align: left; padding: 0.7rem 0.8rem; color: hsl(var(--muted-foreground)); font-weight: 700;
+  border-bottom: 1px solid hsl(var(--border)); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em;
+  background: hsl(var(--muted) / 0.5);
+}
+.ui-table td { padding: 0.75rem 0.8rem; border-bottom: 1px solid hsl(var(--border)); }
+.ui-table tbody tr:last-child td { border-bottom: 0; }
+.ui-table tbody tr { transition: background .12s; }
+.ui-table tbody tr:hover td { background: hsl(var(--muted) / 0.55); }
+
+/* Badge */
+.badge { display: inline-flex; align-items: center; padding: 0.18rem 0.65rem; border-radius: 999px; font-size: 0.72rem; font-weight: 700; }
+.badge-lulus  { background: hsl(var(--success) / 0.13); color: hsl(var(--success)); }
+.badge-diklat { background: hsl(var(--primary) / 0.13); color: hsl(var(--primary)); }
+.badge-tidak  { background: hsl(var(--danger) / 0.13); color: hsl(var(--danger)); }
+.badge-role   { background: hsl(var(--accent) / 0.12); color: hsl(var(--accent)); }
+
+/* Modal */
+.ui-modal { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; background: rgb(6 18 40 / 0.5); backdrop-filter: blur(2px); padding: 1rem; }
+.ui-modal-box { width: 100%; background: hsl(var(--card)); border-radius: 0.85rem; padding: 1.4rem 1.5rem; box-shadow: 0 30px 60px -20px rgb(6 18 40 / 0.4); max-height: 90vh; overflow-y: auto; border: 1px solid hsl(var(--border)); }
+.ui-modal-title { font-family: "Plus Jakarta Sans", sans-serif; font-size: 1.15rem; font-weight: 800; margin: 0 0 0.85rem; }
+.ui-modal-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1.4rem; }
+
+/* Kartu statistik dashboard */
+.stat-card {
+  background: hsl(var(--card)); border: 1px solid hsl(var(--border));
+  border-radius: var(--radius); padding: 1.15rem 1.25rem;
+  box-shadow: 0 1px 3px rgb(15 30 60 / 0.05);
+  transition: box-shadow .18s, transform .18s, border-color .18s;
+}
+.stat-card:hover { box-shadow: 0 12px 26px -14px rgb(15 30 60 / 0.28); transform: translateY(-2px); border-color: hsl(var(--input)); }
+.stat-card .val { font-family: "Plus Jakarta Sans", sans-serif; font-size: 1.7rem; font-weight: 800; margin: 0.3rem 0; letter-spacing: -0.01em; }
+.stat-icon { width: 2.4rem; height: 2.4rem; border-radius: 0.65rem; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+
+/* Item daftar hapus (checkbox) */
+.del-item { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.6rem; border-radius: 0.45rem; }
+.del-item:hover { background: hsl(var(--muted)); }
+
+/* Edit target di kartu */
+.dash-edit-target { background: none; border: 0; cursor: pointer; padding: 0 0.15rem; }
+
+/* Scrollbar halus */
+.sidebar-nav::-webkit-scrollbar { width: 6px; }
+.sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+
+/* Fokus keyboard yang terlihat (aksesibilitas) */
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid hsl(var(--primary)); outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
