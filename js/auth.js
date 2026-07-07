@@ -24,7 +24,8 @@ export async function loadProfile() {
   return me;
 }
 export function isAdmin()  { return me?.role === "Admin"; }
-export function canWrite() { return me?.role === "Admin" || me?.role === "Manajemen"; }
+// Admin, Manajemen, dan User semuanya boleh mengelola data (import, tambah, hapus).
+export function canWrite() { return me?.role === "Admin" || me?.role === "Manajemen" || me?.role === "User"; }
 export async function logActivity(jenis, keterangan) {
   try {
     await sb.from("activity_logs").insert({ user_name: me?.full_name || "sistem", jenis_kegiatan: jenis, keterangan });
