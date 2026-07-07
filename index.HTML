@@ -139,17 +139,6 @@
       <div class="content">
         <!-- ---------- DASHBOARD ---------- -->
         <section id="view-dashboard" class="view space-y-6">
-          <!-- Filter dashboard (mirip modul peserta) -->
-          <div class="ui-card p-4">
-            <div class="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
-              <select id="d-jenis"  class="ui-input"><option value="">Semua Diklat</option></select>
-              <select id="d-nama"   class="ui-input"><option value="">Semua Nama</option></select>
-              <select id="d-angk"   class="ui-input"><option value="">Semua Angkatan</option></select>
-              <select id="d-kelas"  class="ui-input"><option value="">Semua Kelas</option></select>
-              <select id="d-status" class="ui-input"><option value="">Semua Status</option><option>LULUS</option><option>DIKLAT</option><option>TIDAK LULUS</option></select>
-              <select id="d-jk"     class="ui-input"><option value="">Semua Jenis Kelamin</option><option>Laki-Laki</option><option>Perempuan</option></select>
-            </div>
-          </div>
           <div id="dash-cards" class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"></div>
           <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <div class="ui-card p-5">
@@ -165,6 +154,15 @@
             <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
               <h3 class="font-display font-bold">Daftar Peserta Diklat</h3>
               <input id="dash-search" placeholder="Cari nama atau NIT/NIK…" class="ui-input w-full sm:w-72" />
+            </div>
+            <!-- Filter daftar peserta (mirip modul peserta) -->
+            <div class="mb-4 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+              <select id="d-jenis"  class="ui-input"><option value="">Semua Diklat</option></select>
+              <select id="d-nama"   class="ui-input"><option value="">Semua Nama</option></select>
+              <select id="d-angk"   class="ui-input"><option value="">Semua Angkatan</option></select>
+              <select id="d-kelas"  class="ui-input"><option value="">Semua Kelas</option></select>
+              <select id="d-status" class="ui-input"><option value="">Semua Status</option><option>LULUS</option><option>DIKLAT</option><option>TIDAK LULUS</option></select>
+              <select id="d-jk"     class="ui-input"><option value="">Semua Jenis Kelamin</option><option>Laki-Laki</option><option>Perempuan</option></select>
             </div>
             <div id="dash-table" class="overflow-x-auto"></div>
           </div>
