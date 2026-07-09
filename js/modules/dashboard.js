@@ -1,6 +1,9 @@
 import { sb } from "../supabaseClient.js";
 import { $, escapeHtml, toast } from "../ui.js";
 import { canWrite, logActivity } from "../auth.js";
+import { buildPager } from "./peserta.js";
+
+let dPage = 1, dSize = 25; // pagination daftar peserta di dashboard
 
 let barChart = null, pieChart = null, all = [], targets = {};
 const PALETTE = ["#22c55e", "#f59e0b", "#8b5cf6", "#3b82f6", "#ef4444", "#ec4899", "#14b8a6", "#6366f1"];
@@ -178,21 +181,33 @@ function renderQuick() {
   );
   const badge = (s) => s === "LULUS" ? '<span class="badge badge-lulus">LULUS</span>'
     : s === "TIDAK LULUS" ? '<span class="badge badge-tidak">TIDAK LULUS</span>' : '<span class="badge badge-diklat">DIKLAT</span>';
+
+  const pg = buildPager(rows.length, dPage, dSize);
+  dPage = pg.page;
+  const pageRows = rows.slice((dPage - 1) * dSize, dPage * dSize);
+
   $("#dash-table").innerHTML = `
     <table class="ui-table">
       <thead><tr><th>NIT/NIK</th><th>Nama Peserta</th><th>Nama Diklat</th><th>Angkatan</th><th>Kelas</th><th>Status</th><th>Jenis Kelamin</th></tr></thead>
-      <tbody>${rows.slice(0, 200).map((p) => `<tr>
+      <tbody>${pageRows.map((p) => `<tr>
         <td>${escapeHtml(p.nit_nik || "-")}</td><td class="font-medium">${escapeHtml(p.nama_peserta)}</td>
         <td>${escapeHtml(p.nama_diklat)}</td><td>${escapeHtml(dAngkatan(p) || "-")}</td><td>${escapeHtml(dKelas(p) || "-")}</td>
         <td>${badge(p.status)}</td><td>${escapeHtml(p.jenis_kelamin || "-")}</td></tr>`).join("")
         || `<tr><td colspan="7" class="py-8 text-center text-muted-foreground">Tidak ada data yang cocok.</td></tr>`}</tbody>
     </table>`;
+  const sumEl = $("#d-summary"); if (sumEl) sumEl.textContent = pg.summary;
+  const pagerEl = $("#d-pager"); if (pagerEl) pagerEl.innerHTML = pg.controls;
 }
 
 export function initDashboard() {
-  $("#dash-search").addEventListener("input", renderQuick);
+  $("#dash-search").addEventListener("input", () => { dPage = 1; renderQuick(); });
   ["#d-jenis", "#d-nama", "#d-angk", "#d-kelas", "#d-status", "#d-jk"].forEach((id) =>
-    $(id)?.addEventListener("change", renderQuick));
+    $(id)?.addEventListener("change", () => { dPage = 1; renderQuick(); }));
+  $("#d-size")?.addEventListener("change", (e) => { dSize = parseInt(e.target.value, 10) || 25; dPage = 1; renderQuick(); });
+  $("#d-pager")?.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-page]"); if (!b) return;
+    dPage = parseInt(b.getAttribute("data-page"), 10); renderQuick();
+  });
   $("#dash-cards").addEventListener("click", (e) => {
     const btn = e.target.closest(".dash-edit-target");
     if (btn) editTarget(btn.getAttribute("data-jenis"));

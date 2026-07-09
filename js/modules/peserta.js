@@ -4,6 +4,7 @@ import { canWrite, logActivity } from "../auth.js";
 
 const TEMPLATE_HEADERS = ["NIT/NIK", "JENIS DIKLAT", "NAMA PESERTA", "NAMA DIKLAT", "ANGKATAN", "KELAS", "STATUS", "JENIS KELAMIN"];
 let cache = []; // seluruh peserta (untuk isi filter)
+let pPage = 1, pSize = 25; // pagination modul peserta
 
 // Ambil angkatan/kelas dengan fallback ke kolom lama "angkatan_kelas" (dipecah dengan '/').
 function getAngkatan(p) {
@@ -83,8 +84,34 @@ function filtered() {
     (!jk || p.jenis_kelamin === jk));
 }
 
+// Bangun HTML kontrol halaman (dipakai bersama oleh peserta & dashboard).
+export function buildPager(total, page, size) {
+  const pages = Math.max(1, Math.ceil(total / size));
+  page = Math.min(Math.max(1, page), pages);
+  const from = total === 0 ? 0 : (page - 1) * size + 1;
+  const to = Math.min(page * size, total);
+  // rentang tombol: maksimal 5 nomor di sekitar halaman aktif
+  let start = Math.max(1, page - 2), end = Math.min(pages, start + 4);
+  start = Math.max(1, end - 4);
+  const btn = (p, label = p, dis = false, active = false) =>
+    `<button class="ui-btn-outline h-8 px-3 ${active ? "!bg-primary !text-white !border-transparent" : ""}" ${dis ? "disabled" : ""} data-page="${p}">${label}</button>`;
+  let nums = "";
+  for (let i = start; i <= end; i++) nums += btn(i, i, false, i === page);
+  return {
+    page,
+    summary: `Menampilkan ${from.toLocaleString("id-ID")}–${to.toLocaleString("id-ID")} dari ${total.toLocaleString("id-ID")} data`,
+    controls: `
+      ${btn(page - 1, "<i class='fa-solid fa-chevron-left'></i>", page <= 1)}
+      ${nums}
+      ${btn(page + 1, "<i class='fa-solid fa-chevron-right'></i>", page >= pages)}`,
+  };
+}
+
 function renderTable() {
-  const rows = filtered();
+  const all = filtered();
+  const pg = buildPager(all.length, pPage, pSize);
+  pPage = pg.page;
+  const rows = all.slice((pPage - 1) * pSize, pPage * pSize);
   const admin = canWrite();
   const body = rows.map((p) => `
     <tr>
@@ -108,6 +135,9 @@ function renderTable() {
       </tr></thead>
       <tbody>${body || `<tr><td colspan="8" class="py-8 text-center text-muted-foreground">Belum ada data.</td></tr>`}</tbody>
     </table>`;
+  // ringkasan + kontrol halaman
+  const sumEl = $("#p-summary"); if (sumEl) sumEl.textContent = pg.summary;
+  const pagerEl = $("#p-pager"); if (pagerEl) pagerEl.innerHTML = pg.controls;
 }
 
 // ---------------------------------------------------------------- template
@@ -318,7 +348,12 @@ async function deleteRow(id) {
 
 // ---------------------------------------------------------------- init
 export function initPeserta() {
-  ["#f-jenis", "#f-nama", "#f-angk", "#f-kelas", "#f-status", "#f-jk"].forEach((id) => $(id).addEventListener("change", renderTable));
+  ["#f-jenis", "#f-nama", "#f-angk", "#f-kelas", "#f-status", "#f-jk"].forEach((id) => $(id).addEventListener("change", () => { pPage = 1; renderTable(); }));
+  $("#p-size")?.addEventListener("change", (e) => { pSize = parseInt(e.target.value, 10) || 25; pPage = 1; renderTable(); });
+  $("#p-pager")?.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-page]"); if (!b) return;
+    pPage = parseInt(b.getAttribute("data-page"), 10); renderTable();
+  });
   $("#btn-template").addEventListener("click", downloadTemplate);
   // Import langsung: klik tombol → buka pemilih file → proses.
   $("#btn-import").addEventListener("click", () => {

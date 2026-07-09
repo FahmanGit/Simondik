@@ -182,6 +182,17 @@
               <select id="d-jk" class="ui-input"><option value="">Semua Jenis Kelamin</option><option>Laki-Laki</option><option>Perempuan</option></select>
             </div>
             <div id="dash-table" class="overflow-x-auto"></div>
+            <!-- Pagination daftar peserta dashboard -->
+            <div class="mt-4 flex flex-col items-center justify-between gap-3 sm:flex-row">
+              <div class="flex items-center gap-2 text-sm text-muted-foreground">
+                <span id="d-summary">—</span>
+                <span class="hidden sm:inline">·</span>
+                <label class="hidden items-center gap-1 sm:flex">Tampil
+                  <select id="d-size" class="ui-input h-8 w-20 py-0"><option>25</option><option>50</option><option>100</option></select>
+                </label>
+              </div>
+              <div id="d-pager" class="flex flex-wrap items-center gap-1"></div>
+            </div>
           </div>
         </section>
         <section id="view-peserta" class="view hidden space-y-6">
@@ -204,6 +215,17 @@
               <select id="f-jk" class="ui-input"><option value="">Semua Jenis Kelamin</option><option>Laki-Laki</option><option>Perempuan</option></select>
             </div>
             <div id="peserta-table" class="overflow-x-auto"></div>
+            <!-- Pagination peserta -->
+            <div class="mt-4 flex flex-col items-center justify-between gap-3 sm:flex-row">
+              <div class="flex items-center gap-2 text-sm text-muted-foreground">
+                <span id="p-summary">—</span>
+                <span class="hidden sm:inline">·</span>
+                <label class="hidden items-center gap-1 sm:flex">Tampil
+                  <select id="p-size" class="ui-input h-8 w-20 py-0"><option>25</option><option>50</option><option>100</option></select>
+                </label>
+              </div>
+              <div id="p-pager" class="flex flex-wrap items-center gap-1"></div>
+            </div>
           </div>
         </section>
         <section id="view-history" class="view hidden">
