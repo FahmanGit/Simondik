@@ -1,10 +1,11 @@
 /* =====================================================================
-   E-Mondik — Premium Modern UI dengan Tema Maritim (Ukuran Proporsional)
+   E-Mondik — Premium Modern UI dengan Tema Maritim
+   Ukuran Login Sedikit Lebih Besar
    PIP Makassar
    ===================================================================== */
 
 /* =====================================================================
-   CSS VARIABLES & DESIGN TOKENS (tidak berubah)
+   CSS VARIABLES & DESIGN TOKENS
    ===================================================================== */
 :root {
   --border: 213 27% 90%;
@@ -73,7 +74,7 @@ body {
   color: hsl(var(--foreground));
 }
 
-/* ----- DEKORASI BACKGROUND (Gelombang, Bintang, dll.) ----- */
+/* ----- DEKORASI BACKGROUND ----- */
 .stars {
   position: fixed;
   top: 0;
@@ -211,7 +212,7 @@ body {
 }
 
 /* =====================================================================
-   LOGIN SCREEN (Ukuran Proporsional)
+   LOGIN SCREEN (Ukuran Sedikit Lebih Besar)
    ===================================================================== */
 .login-wrap {
   position: fixed;
@@ -228,9 +229,9 @@ body {
 .login-container {
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
-  max-width: 880px;
+  max-width: 1000px; /* diperbesar dari 880px */
   width: 100%;
-  max-height: 90vh;
+  max-height: 92vh;
   border-radius: var(--radius-xl);
   overflow: hidden;
   box-shadow: var(--shadow-xl), 0 0 0 1px rgba(255, 255, 255, 0.05);
@@ -246,7 +247,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 2.5rem 3rem;
+  padding: 3rem 3.5rem; /* padding lebih besar */
   color: #fff;
   background:
     radial-gradient(ellipse 500px 300px at 0% 20%, rgba(0, 180, 255, 0.15), transparent 60%),
@@ -260,10 +261,10 @@ body {
 .login-aside::before {
   content: "";
   position: absolute;
-  left: -60px;
-  top: -60px;
-  width: 200px;
-  height: 200px;
+  left: -80px;
+  top: -80px;
+  width: 240px;
+  height: 240px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(255, 255, 255, 0.06), transparent 70%);
   animation: float 8s ease-in-out infinite;
@@ -271,10 +272,10 @@ body {
 .login-aside::after {
   content: "";
   position: absolute;
-  right: -80px;
-  bottom: -80px;
-  width: 250px;
-  height: 250px;
+  right: -100px;
+  bottom: -100px;
+  width: 300px;
+  height: 300px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(0, 180, 255, 0.05), transparent 70%);
   animation: float 12s ease-in-out infinite reverse;
@@ -283,11 +284,11 @@ body {
 .login-aside .brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.75rem;
   font-family: "Plus Jakarta Sans", sans-serif;
   font-weight: 800;
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
+  font-size: 1.35rem;
+  margin-bottom: 2.2rem;
   position: relative;
   z-index: 2;
   text-shadow: 0 2px 20px rgba(0,0,0,0.3);
@@ -296,9 +297,9 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.4rem;
-  height: 2.4rem;
-  border-radius: 0.65rem;
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 0.75rem;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -309,9 +310,9 @@ body {
 .login-aside .headline {
   font-family: "Plus Jakarta Sans", sans-serif;
   font-weight: 800;
-  font-size: clamp(1.5rem, 2.8vw, 2.2rem);
+  font-size: clamp(1.8rem, 3.2vw, 2.6rem); /* lebih besar */
   line-height: 1.15;
-  margin: 0 0 0.8rem;
+  margin: 0 0 1rem;
   position: relative;
   z-index: 2;
   text-shadow: 0 2px 20px rgba(0,0,0,0.3);
@@ -322,9 +323,9 @@ body {
 .login-aside .lead {
   max-width: 34ch;
   color: rgba(255, 255, 255, 0.7);
-  line-height: 1.6;
+  line-height: 1.7;
   margin: 0;
-  font-size: 0.95rem;
+  font-size: 1rem; /* lebih besar */
   position: relative;
   z-index: 2;
   text-shadow: 0 1px 10px rgba(0,0,0,0.2);
@@ -334,8 +335,8 @@ body {
   margin-right: 6px;
 }
 .login-aside .sub-lead {
-  margin-top: 1.2rem;
-  font-size: 0.75rem;
+  margin-top: 1.5rem;
+  font-size: 0.8rem;
   color: rgba(255, 255, 255, 0.35);
   position: relative;
   z-index: 2;
@@ -344,17 +345,17 @@ body {
 /* Dot grid */
 .login-dots {
   position: absolute;
-  right: 30px;
-  top: 30px;
+  right: 35px;
+  top: 35px;
   display: grid;
-  grid-template-columns: repeat(5, 6px);
-  gap: 12px;
+  grid-template-columns: repeat(5, 7px);
+  gap: 14px;
   opacity: 0.15;
   z-index: 1;
 }
 .login-dots span {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.6);
   animation: dotPulse 3s ease-in-out infinite;
@@ -369,14 +370,14 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem 2.5rem;
+  padding: 2.5rem 3rem; /* padding lebih besar */
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
 .login-card {
   width: 100%;
-  max-width: 24rem;
+  max-width: 26rem; /* sedikit lebih lebar */
   animation: fadeInUp 0.5s ease 0.15s both;
 }
 .login-card .mobile-brand {
@@ -389,29 +390,29 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.2rem;
-  height: 2.2rem;
+  width: 2.5rem;
+  height: 2.5rem;
   background: #0a1628;
   color: hsl(var(--gold));
-  border-radius: 0.5rem;
+  border-radius: 0.6rem;
 }
 .login-card h2 {
   font-family: "Plus Jakarta Sans", sans-serif;
   font-weight: 800;
-  font-size: 1.5rem;
+  font-size: 1.7rem; /* lebih besar */
   letter-spacing: -0.02em;
   color: #0a1628;
 }
 .login-card .subtitle {
   color: #4a5568;
-  margin-top: 0.2rem;
-  margin-bottom: 1.5rem;
-  font-size: 0.9rem;
+  margin-top: 0.25rem;
+  margin-bottom: 1.8rem;
+  font-size: 0.95rem;
 }
 .login-footer {
-  margin-top: 1.5rem;
+  margin-top: 1.8rem;
   text-align: center;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: #718096;
 }
 
@@ -431,14 +432,14 @@ body {
   }
   .login-panel {
     border-radius: var(--radius-lg);
-    padding: 1.8rem 1.5rem;
+    padding: 2rem 1.5rem;
     background: rgba(255, 255, 255, 0.92);
   }
   .login-card .mobile-brand {
     display: flex;
   }
   .login-card h2 {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
   }
 }
 
@@ -690,12 +691,12 @@ body {
    ===================================================================== */
 .ui-input {
   width: 100%;
-  height: 2.75rem;
+  height: 3rem; /* lebih tinggi */
   padding: 0 1rem;
   border: 1.5px solid hsl(var(--border));
   border-radius: var(--radius-md);
   background: hsl(var(--card));
-  font-size: 0.875rem;
+  font-size: 0.9rem; /* lebih besar */
   color: hsl(var(--foreground));
   outline: none;
   transition: all var(--transition-fast);
@@ -719,7 +720,7 @@ select.ui-input {
 .ui-label {
   display: block;
   margin-bottom: 0.4rem;
-  font-size: 0.8rem;
+  font-size: 0.85rem; /* lebih besar */
   font-weight: 600;
   color: hsl(var(--foreground));
   letter-spacing: 0.01em;
@@ -735,10 +736,10 @@ select.ui-input {
   align-items: center;
   gap: 0.6rem;
   justify-content: center;
-  height: 2.75rem;
+  height: 3rem; /* lebih tinggi */
   padding: 0 1.5rem;
   border-radius: var(--radius-md);
-  font-size: 0.85rem;
+  font-size: 0.9rem; /* lebih besar */
   font-weight: 600;
   cursor: pointer;
   border: 1.5px solid transparent;

@@ -317,7 +317,302 @@
         <button id="ma-submit" class="ui-btn-primary">Simpan</button>
       </div>
     </div>
+  </div><!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="E-Mondik — Sistem Monitoring Peserta Diklat PIP Makassar." />
+  <meta name="theme-color" content="#0a1628" />
+  <title>E-Mondik — Monitoring Peserta Diklat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            display: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+          },
+          colors: {
+            border: "hsl(213 27% 90%)",
+            input: "hsl(213 27% 88%)",
+            ring: "hsl(214 84% 40%)",
+            background: "hsl(210 33% 98%)",
+            foreground: "hsl(214 45% 14%)",
+            muted: "hsl(213 33% 95%)",
+            "muted-foreground": "hsl(214 16% 46%)",
+            card: "hsl(0 0% 100%)",
+            primary: "hsl(214 84% 40%)",
+            "primary-foreground": "hsl(0 0% 100%)",
+            accent: "hsl(174 84% 32%)",
+            success: "hsl(174 84% 32%)",
+            danger: "hsl(0 72% 51%)",
+            warning: "hsl(32 95% 44%)",
+            gold: "hsl(45 100% 55%)",
+          },
+          borderRadius: { lg: "0.65rem", md: "0.5rem", sm: "0.375rem" },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+
+  <!-- Dekorasi -->
+  <div class="stars"></div>
+  <div class="wave"></div>
+  <div class="wave"></div>
+  <div class="ship-icon ship-icon-1"><i class="fa-solid fa-ship"></i></div>
+  <div class="ship-icon ship-icon-2"><i class="fa-regular fa-anchor"></i></div>
+  <div class="ship-icon ship-icon-3"><i class="fa-solid fa-sailboat"></i></div>
+  <div class="bird bird-1"><i class="fa-regular fa-crow"></i></div>
+  <div class="bird bird-2"><i class="fa-regular fa-crow"></i></div>
+  <div class="bird bird-3"><i class="fa-regular fa-crow"></i></div>
+
+  <!-- LOGIN -->
+  <div id="login-screen" class="login-wrap">
+    <div class="login-container">
+      <aside class="login-aside">
+        <div class="login-dots" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="brand">
+          <span class="logo"><i class="fa-solid fa-anchor"></i></span>
+          E-Mondik
+        </div>
+        <h1 class="headline">Monitoring peserta diklat,<br />dalam satu dasbor.</h1>
+        <p class="lead">
+          <i class="fa-solid fa-ship"></i>
+          Pantau realisasi peserta terhadap target, kelola data diklat, dan tinjau aktivitas — untuk <strong>PIP Makassar</strong>.
+        </p>
+        <p class="sub-lead">
+          <i class="fa-regular fa-clock"></i> Berdiri sejak 1921 — Mencetak Pelaut Andal Indonesia
+        </p>
+      </aside>
+
+      <div class="login-panel">
+        <div class="login-card">
+          <div class="mobile-brand">
+            <span><i class="fa-solid fa-anchor"></i></span>
+            <span style="background:transparent;color:inherit;font-weight:800;font-size:1.1rem;padding:0;">E-Mondik</span>
+          </div>
+          <h2>Selamat datang kembali</h2>
+          <p class="subtitle">Masuk untuk mengakses dasbor monitoring.</p>
+          <form id="login-form" class="space-y-3">
+            <div>
+              <label class="ui-label" for="login-email">Email</label>
+              <input id="login-email" type="email" required placeholder="nama@pipmakassar.ac.id" class="ui-input" />
+            </div>
+            <div>
+              <label class="ui-label" for="login-password">Kata sandi</label>
+              <input id="login-password" type="password" required placeholder="••••••••" class="ui-input" />
+            </div>
+            <p id="login-error" class="hidden rounded-lg border border-danger/25 bg-danger/10 px-3 py-2 text-sm text-danger"></p>
+            <button type="submit" class="ui-btn-primary w-full"><i class="fa-solid fa-right-to-bracket"></i> Masuk</button>
+          </form>
+          <div class="login-footer">
+            <i class="fa-regular fa-anchor" style="margin-right:6px;"></i>
+            PIP Makassar — Sistem Monitoring Peserta Diklat
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <!-- APP SHELL (sama seperti sebelumnya) -->
+  <div id="app" class="app-shell hidden">
+    <div id="sidebar-overlay" class="sidebar-overlay hidden"></div>
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-brand">
+        <span class="logo"><i class="fa-solid fa-anchor"></i></span>
+        <div>
+          <div class="name">E-Mondik</div>
+          <div class="sub">PIP Makassar</div>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">Menu Utama</div>
+        <a href="#dashboard" class="nav-link" data-view="dashboard"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+        <a href="#peserta" class="nav-link" data-view="peserta"><i class="fa-solid fa-users"></i> Modul Peserta</a>
+        <a href="#history" class="nav-link" data-view="history"><i class="fa-solid fa-clock-rotate-left"></i> History Activity</a>
+        <div class="nav-section" data-admin="1">Administrasi</div>
+        <a href="#akun" class="nav-link" data-view="akun" data-admin="1"><i class="fa-solid fa-user-gear"></i> Manajemen Akun</a>
+      </nav>
+      <div class="sidebar-user">
+        <div class="avatar"><i class="fa-solid fa-user"></i></div>
+        <div class="min-w-0 flex-1">
+          <p id="me-name" class="truncate text-sm font-semibold">—</p>
+          <p id="me-role" class="text-xs text-white/55">—</p>
+        </div>
+        <button id="btn-logout" title="Keluar" class="text-white/60 transition hover:text-white"><i class="fa-solid fa-right-from-bracket"></i></button>
+      </div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <div class="flex min-w-0 items-center gap-3">
+          <button id="btn-menu" class="btn-menu" aria-label="Buka menu"><i class="fa-solid fa-bars"></i></button>
+          <div class="min-w-0">
+            <h2 id="page-title" class="truncate">Monitoring Peserta Diklat</h2>
+            <p class="sub hidden sm:block">PIP Makassar — Tahun Anggaran <span id="tahun-label">2026</span></p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <select id="filter-tahun" class="ui-input w-24 sm:w-28"></select>
+          <select id="filter-bulan" class="ui-input w-32 sm:w-40"></select>
+        </div>
+      </header>
+      <div class="content">
+        <section id="view-dashboard" class="view space-y-6">
+          <div id="dash-cards" class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"></div>
+          <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <div class="ui-card p-5">
+              <h3 class="mb-4 font-display font-bold">Realisasi Peserta Bulanan</h3>
+              <canvas id="chart-bar" height="150"></canvas>
+            </div>
+            <div class="ui-card p-5">
+              <h3 class="mb-4 font-display font-bold">Komposisi Peserta</h3>
+              <canvas id="chart-pie" height="150"></canvas>
+            </div>
+          </div>
+          <div class="ui-card p-5">
+            <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
+              <h3 class="font-display font-bold">Daftar Peserta Diklat</h3>
+              <input id="dash-search" placeholder="Cari nama atau NIT/NIK…" class="ui-input w-full sm:w-72" />
+            </div>
+            <div class="mb-4 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+              <select id="d-jenis" class="ui-input"><option value="">Semua Diklat</option></select>
+              <select id="d-nama" class="ui-input"><option value="">Semua Nama</option></select>
+              <select id="d-angk" class="ui-input"><option value="">Semua Angkatan</option></select>
+              <select id="d-kelas" class="ui-input"><option value="">Semua Kelas</option></select>
+              <select id="d-status" class="ui-input"><option value="">Semua Status</option><option>LULUS</option><option>DIKLAT</option><option>TIDAK LULUS</option></select>
+              <select id="d-jk" class="ui-input"><option value="">Semua Jenis Kelamin</option><option>Laki-Laki</option><option>Perempuan</option></select>
+            </div>
+            <div id="dash-table" class="overflow-x-auto"></div>
+          </div>
+        </section>
+        <section id="view-peserta" class="view hidden space-y-6">
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-3" id="peserta-cards"></div>
+          <div class="ui-card p-5">
+            <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <h3 class="font-display font-bold">Data Peserta</h3>
+              <div class="flex flex-wrap gap-2" data-write="1">
+                <button id="btn-template" class="ui-btn-outline"><i class="fa-solid fa-download"></i> Unduh Template</button>
+                <button id="btn-import" class="ui-btn-outline"><i class="fa-solid fa-file-import"></i> Import Data</button>
+                <button id="btn-hapus-semua" class="ui-btn-danger"><i class="fa-solid fa-trash"></i> Hapus Semua Data</button>
+              </div>
+            </div>
+            <div class="mb-4 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+              <select id="f-jenis" class="ui-input"><option value="">Semua Diklat</option></select>
+              <select id="f-nama" class="ui-input"><option value="">Semua Nama</option></select>
+              <select id="f-angk" class="ui-input"><option value="">Semua Angkatan</option></select>
+              <select id="f-kelas" class="ui-input"><option value="">Semua Kelas</option></select>
+              <select id="f-status" class="ui-input"><option value="">Semua Status</option><option>LULUS</option><option>DIKLAT</option><option>TIDAK LULUS</option></select>
+              <select id="f-jk" class="ui-input"><option value="">Semua Jenis Kelamin</option><option>Laki-Laki</option><option>Perempuan</option></select>
+            </div>
+            <div id="peserta-table" class="overflow-x-auto"></div>
+          </div>
+        </section>
+        <section id="view-history" class="view hidden">
+          <div class="ui-card p-5">
+            <h3 class="mb-4 font-display font-bold">Riwayat Aktivitas</h3>
+            <div id="history-table" class="overflow-x-auto"></div>
+          </div>
+        </section>
+        <section id="view-akun" class="view hidden">
+          <div class="ui-card p-5">
+            <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <h3 class="font-display font-bold">Manajemen Akun</h3>
+              <button id="btn-add-akun" class="ui-btn-primary"><i class="fa-solid fa-plus"></i> Tambah Akun</button>
+            </div>
+            <div id="akun-table" class="overflow-x-auto"></div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- MODALS -->
+  <div id="modal-delete" class="ui-modal hidden">
+    <div class="ui-modal-box max-w-lg">
+      <h3 class="ui-modal-title">Hapus Data Peserta</h3>
+      <div class="space-y-3">
+        <div>
+          <label class="ui-label">Jenis Diklat</label>
+          <select id="del-jenis" class="ui-input"><option value="">— pilih —</option></select>
+        </div>
+        <div id="del-list-wrap" class="hidden">
+          <div class="mb-2 flex items-center justify-between">
+            <label class="ui-label mb-0">Nama Diklat</label>
+            <label class="flex items-center gap-2 text-sm"><input id="del-all" type="checkbox" /> Pilih Semua</label>
+          </div>
+          <div id="del-list" class="max-h-56 space-y-1 overflow-y-auto rounded-lg border border-border p-2"></div>
+        </div>
+      </div>
+      <div class="ui-modal-actions">
+        <button class="ui-btn-outline" data-close-modal="modal-delete">Batal</button>
+        <button id="del-submit" class="ui-btn-danger">Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-peserta" class="ui-modal hidden">
+    <div class="ui-modal-box max-w-lg">
+      <h3 class="ui-modal-title" id="mp-title">Edit Peserta</h3>
+      <input type="hidden" id="mp-id" />
+      <div class="grid grid-cols-2 gap-3">
+        <div class="col-span-2"><label class="ui-label">Nama Peserta</label><input id="mp-nama" class="ui-input" /></div>
+        <div><label class="ui-label">NIT/NIK</label><input id="mp-nit" class="ui-input" /></div>
+        <div><label class="ui-label">Jenis Kelamin</label><select id="mp-jk" class="ui-input"><option>Laki-Laki</option><option>Perempuan</option></select></div>
+        <div><label class="ui-label">Jenis Diklat</label><input id="mp-jenis" class="ui-input" /></div>
+        <div><label class="ui-label">Nama Diklat</label><input id="mp-namadiklat" class="ui-input" /></div>
+        <div><label class="ui-label">Angkatan</label><input id="mp-angk" class="ui-input" placeholder="mis. ANGKATAN 33" /></div>
+        <div><label class="ui-label">Kelas</label><input id="mp-kelas" class="ui-input" placeholder="mis. KELAS 4B" /></div>
+        <div><label class="ui-label">Status</label><select id="mp-status" class="ui-input"><option>LULUS</option><option>DIKLAT</option><option>TIDAK LULUS</option></select></div>
+      </div>
+      <div class="ui-modal-actions">
+        <button class="ui-btn-outline" data-close-modal="modal-peserta">Batal</button>
+        <button id="mp-submit" class="ui-btn-primary">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-akun" class="ui-modal hidden">
+    <div class="ui-modal-box max-w-md">
+      <h3 class="ui-modal-title" id="ma-title">Tambah Akun</h3>
+      <input type="hidden" id="ma-id" />
+      <div class="space-y-3">
+        <div><label class="ui-label">Nama Lengkap</label><input id="ma-name" class="ui-input" /></div>
+        <div><label class="ui-label">Email</label><input id="ma-email" type="email" class="ui-input" /></div>
+        <div id="ma-pass-wrap"><label class="ui-label">Kata Sandi</label><input id="ma-pass" type="password" class="ui-input" /></div>
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="ui-label">Role</label><select id="ma-role" class="ui-input"><option>Admin</option><option>Manajemen</option><option>User</option></select></div>
+          <div><label class="ui-label">Status</label><select id="ma-status" class="ui-input"><option>Aktif</option><option>Nonaktif</option></select></div>
+        </div>
+      </div>
+      <div class="ui-modal-actions">
+        <button class="ui-btn-outline" data-close-modal="modal-akun">Batal</button>
+        <button id="ma-submit" class="ui-btn-primary">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="hidden"></div>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
 
   <!-- Toast -->
   <div id="toast" class="hidden"></div>
