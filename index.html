@@ -238,10 +238,11 @@
 
         <!-- ---------- DATA MASTER ---------- -->
         <section id="view-master" class="view hidden space-y-6">
+          <p class="text-sm text-muted-foreground">Nama Diklat merupakan <b>turunan</b> dari Jenis Diklat. Pilih jenis diklat di kiri, lalu tambahkan nama diklatnya di kanan.</p>
           <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <div class="ui-card p-5">
               <h3 class="mb-1 font-display font-bold">Jenis Diklat</h3>
-              <p class="mb-4 text-sm text-muted-foreground">Kelola daftar jenis diklat.</p>
+              <p class="mb-4 text-sm text-muted-foreground">Klik salah satu untuk mengelola nama diklat turunannya.</p>
               <div class="mb-3 flex gap-2">
                 <input id="master-jenis-input" class="ui-input" placeholder="mis. Pembentukan" />
                 <button id="master-jenis-add" class="ui-btn-primary whitespace-nowrap"><i class="fa-solid fa-plus"></i> Tambah</button>
@@ -249,9 +250,9 @@
               <div id="master-jenis" class="max-h-96 space-y-1 overflow-y-auto rounded-lg border border-border p-2"></div>
             </div>
             <div class="ui-card p-5">
-              <h3 class="mb-1 font-display font-bold">Nama Diklat</h3>
-              <p class="mb-4 text-sm text-muted-foreground">Kelola daftar nama diklat.</p>
-              <div class="mb-3 flex gap-2">
+              <h3 id="master-nama-head" class="mb-1 font-display font-bold">Nama Diklat</h3>
+              <p class="mb-4 text-sm text-muted-foreground">Daftar nama diklat untuk jenis yang dipilih.</p>
+              <div id="master-nama-addwrap" class="mb-3 hidden gap-2 sm:flex">
                 <input id="master-nama-input" class="ui-input" placeholder="mis. DIPLOMA IV NAUTIKA" />
                 <button id="master-nama-add" class="ui-btn-primary whitespace-nowrap"><i class="fa-solid fa-plus"></i> Tambah</button>
               </div>

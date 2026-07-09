@@ -69,12 +69,23 @@ function fillDashFilters() {
     const el = $(sel); if (!el) return;
     const cur = el.value;
     el.innerHTML = `<option value="">${allLabel}</option>` + values.map((v) => `<option>${v}</option>`).join("");
-    if (values.includes(cur)) el.value = cur;
+    el.value = values.includes(cur) ? cur : "";
   };
   set("#d-jenis", dUniq(all.map((p) => p.jenis_diklat)), "Semua Diklat");
-  set("#d-nama", dUniq(all.map((p) => p.nama_diklat)), "Semua Nama");
+  fillDashNama();
   set("#d-angk", dUniq(all.map(dAngkatan)), "Semua Angkatan");
   set("#d-kelas", dUniq(all.map(dKelas)), "Semua Kelas");
+}
+
+// Isi Nama Diklat dashboard sesuai Jenis Diklat terpilih (turunannya saja).
+function fillDashNama() {
+  const jenis = $("#d-jenis")?.value || "";
+  const el = $("#d-nama"); if (!el) return;
+  const cur = el.value;
+  const src = jenis ? all.filter((p) => p.jenis_diklat === jenis) : all;
+  const values = dUniq(src.map((p) => p.nama_diklat));
+  el.innerHTML = `<option value="">Semua Nama</option>` + values.map((v) => `<option>${v}</option>`).join("");
+  el.value = values.includes(cur) ? cur : "";
 }
 
 // Hitung jumlah peserta untuk satu kartu (cocokkan lewat aliases).
@@ -201,7 +212,8 @@ function renderQuick() {
 
 export function initDashboard() {
   $("#dash-search").addEventListener("input", () => { dPage = 1; renderQuick(); });
-  ["#d-jenis", "#d-nama", "#d-angk", "#d-kelas", "#d-status", "#d-jk"].forEach((id) =>
+  $("#d-jenis")?.addEventListener("change", () => { fillDashNama(); dPage = 1; renderQuick(); });
+  ["#d-nama", "#d-angk", "#d-kelas", "#d-status", "#d-jk"].forEach((id) =>
     $(id)?.addEventListener("change", () => { dPage = 1; renderQuick(); }));
   $("#d-size")?.addEventListener("change", (e) => { dSize = parseInt(e.target.value, 10) || 25; dPage = 1; renderQuick(); });
   $("#d-pager")?.addEventListener("click", (e) => {

@@ -1,6 +1,7 @@
 import { sb } from "../supabaseClient.js";
 import { $, $$, escapeHtml, openModal, closeModal, toast } from "../ui.js";
 import { canWrite, logActivity } from "../auth.js";
+import { getMasterTree } from "./master.js";
 
 const TEMPLATE_HEADERS = ["NIT/NIK", "JENIS DIKLAT", "NAMA PESERTA", "NAMA DIKLAT", "ANGKATAN", "KELAS", "STATUS", "JENIS KELAMIN"];
 let cache = []; // seluruh peserta (untuk isi filter)
@@ -63,12 +64,22 @@ function fillFilters() {
   const set = (id, values, first) => {
     const el = $(id); const cur = el.value;
     el.innerHTML = `<option value="">${first}</option>` + values.map((v) => `<option>${escapeHtml(v)}</option>`).join("");
-    el.value = cur;
+    el.value = values.includes(cur) ? cur : "";
   };
   set("#f-jenis", uniq(cache.map((p) => p.jenis_diklat)), "Semua Diklat");
-  set("#f-nama", uniq(cache.map((p) => p.nama_diklat)), "Semua Nama");
+  fillNamaByJenis();
   set("#f-angk", uniq(cache.map(getAngkatan)), "Semua Angkatan");
   set("#f-kelas", uniq(cache.map(getKelas)), "Semua Kelas");
+}
+
+// Isi dropdown Nama Diklat sesuai Jenis Diklat yang dipilih (turunannya saja).
+function fillNamaByJenis() {
+  const jenis = $("#f-jenis").value;
+  const el = $("#f-nama"); const cur = el.value;
+  const src = jenis ? cache.filter((p) => p.jenis_diklat === jenis) : cache;
+  const values = uniq(src.map((p) => p.nama_diklat));
+  el.innerHTML = `<option value="">Semua Nama</option>` + values.map((v) => `<option>${escapeHtml(v)}</option>`).join("");
+  el.value = values.includes(cur) ? cur : "";
 }
 
 function filtered() {
@@ -323,6 +334,26 @@ async function importFromFile(file) {
     return toast("Tidak ada baris valid. Pastikan kolom Nama Peserta, Jenis Diklat, dan Nama Diklat terisi.", "warn");
   }
 
+  // Validasi terhadap data master: Nama Diklat harus turunan dari Jenis Diklat.
+  const tree = await getMasterTree();
+  if (tree.jenis.length) {
+    const norm = (s) => String(s || "").trim().toLowerCase();
+    const jenisSet = new Set(tree.jenis.map(norm));
+    const mism = [];
+    rows.forEach((r, i) => {
+      const jOk = jenisSet.has(norm(r.jenis_diklat));
+      const kids = (tree.namaByJenis[tree.jenis.find((j) => norm(j) === norm(r.jenis_diklat))] || []).map(norm);
+      const nOk = kids.length === 0 || kids.includes(norm(r.nama_diklat));
+      if (!jOk || !nOk) mism.push(`Baris ${i + 2}: "${r.nama_diklat}" tidak cocok dengan jenis "${r.jenis_diklat}"`);
+    });
+    if (mism.length) {
+      const preview = mism.slice(0, 5).join("\n");
+      const extra = mism.length > 5 ? `\n…dan ${mism.length - 5} baris lain.` : "";
+      const ok = confirm(`Ada ${mism.length} baris yang Nama Diklat-nya tidak sesuai Jenis Diklat menurut Data Master:\n\n${preview}${extra}\n\nTetap lanjutkan import?`);
+      if (!ok) return toast("Import dibatalkan. Perbaiki file atau lengkapi Data Master.", "warn");
+    }
+  }
+
   const { error } = await sb.from("peserta").insert(rows);
   if (error) return toast(error.message, "err");
   await logActivity("import", `import ${rows.length} peserta dari file ${file.name}`);
@@ -405,7 +436,8 @@ async function deleteRow(id) {
 
 // ---------------------------------------------------------------- init
 export function initPeserta() {
-  ["#f-jenis", "#f-nama", "#f-angk", "#f-kelas", "#f-status", "#f-jk"].forEach((id) => $(id).addEventListener("change", () => { pPage = 1; renderTable(); }));
+  $("#f-jenis").addEventListener("change", () => { fillNamaByJenis(); pPage = 1; renderTable(); });
+  ["#f-nama", "#f-angk", "#f-kelas", "#f-status", "#f-jk"].forEach((id) => $(id).addEventListener("change", () => { pPage = 1; renderTable(); }));
   $("#p-size")?.addEventListener("change", (e) => { pSize = parseInt(e.target.value, 10) || 25; pPage = 1; renderTable(); });
   $("#p-pager")?.addEventListener("click", (e) => {
     const b = e.target.closest("[data-page]"); if (!b) return;
