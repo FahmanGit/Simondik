@@ -1,5 +1,5 @@
 /* =====================================================================
-   E-Mondik — Premium Modern UI (Full Rewrite)
+   E-Mondik — Premium Modern UI dengan Tema Maritim
    PIP Makassar
    ===================================================================== */
 
@@ -21,8 +21,9 @@
   --success: 152 69% 38%;
   --danger: 0 72% 51%;
   --warning: 32 95% 44%;
+  --gold: 45 100% 55%;
 
-  /* Sidebar (deep navy premium) */
+  /* Sidebar (deep navy) */
   --sidebar: 220 60% 10%;
   --sidebar-2: 220 55% 14%;
   --sidebar-fg: 210 30% 88%;
@@ -30,13 +31,13 @@
   --sidebar-w: 17rem;
   --topbar-h: 4.5rem;
 
-  /* Radius yang lebih modern */
+  /* Radius */
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
   --radius-xl: 1.25rem;
 
-  /* Shadow System */
+  /* Shadow */
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.02);
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.02);
@@ -50,7 +51,7 @@
 }
 
 /* =====================================================================
-   GLOBAL RESET & BASE
+   GLOBAL RESET & BASE (dengan Background Maritim)
    ===================================================================== */
 *,
 *::before,
@@ -64,11 +65,14 @@ body {
 body {
   margin: 0;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: hsl(var(--background));
+  background: linear-gradient(135deg, #0a1628 0%, #0d2847 30%, #1a4a6e 60%, #2d6b8f 80%, #4a90b0 100%);
   color: hsl(var(--foreground));
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.6;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
 }
 .font-display {
   font-family: "Plus Jakarta Sans", "Inter", sans-serif;
@@ -80,6 +84,89 @@ body {
 ::selection {
   background: hsl(var(--primary) / 0.15);
   color: hsl(var(--foreground));
+}
+
+/* ----- DEKORASI BACKGROUND (Gelombang, Bintang, dll.) ----- */
+/* Bintang / cahaya di atas */
+.stars {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    radial-gradient(2px 2px at 10% 10%, rgba(255,255,255,0.3), transparent),
+    radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,0.2), transparent),
+    radial-gradient(1px 1px at 40% 15%, rgba(255,255,255,0.4), transparent),
+    radial-gradient(2px 2px at 60% 25%, rgba(255,255,255,0.2), transparent),
+    radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,0.3), transparent),
+    radial-gradient(2px 2px at 15% 60%, rgba(255,255,255,0.15), transparent),
+    radial-gradient(1px 1px at 75% 70%, rgba(255,255,255,0.2), transparent);
+  background-size: 100% 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Gelombang */
+.wave {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 120px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath d='M0,60 C300,120 600,0 900,60 C1050,90 1150,70 1200,60 L1200,120 L0,120 Z' fill='rgba(255,255,255,0.05)'/%3E%3C/svg%3E") repeat-x bottom;
+  background-size: 1200px 120px;
+  animation: waveMove 8s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+.wave:nth-child(2) {
+  bottom: 20px;
+  opacity: 0.4;
+  animation-duration: 12s;
+  animation-direction: reverse;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath d='M0,40 C200,100 500,0 800,50 C1000,80 1100,60 1200,40 L1200,120 L0,120 Z' fill='rgba(255,255,255,0.03)'/%3E%3C/svg%3E");
+}
+@keyframes waveMove {
+  0% { background-position-x: 0; }
+  100% { background-position-x: 1200px; }
+}
+
+/* Ikon dekoratif (kapal, jangkar, burung) */
+.ship-icon {
+  position: fixed;
+  color: rgba(255, 255, 255, 0.04);
+  pointer-events: none;
+  z-index: 0;
+  animation: floatShip 15s ease-in-out infinite;
+}
+.ship-icon-1 { bottom: 80px; left: 5%; font-size: 10rem; animation-delay: 0s; }
+.ship-icon-2 { top: 20%; right: 8%; font-size: 6rem; animation-delay: -5s; }
+.ship-icon-3 { bottom: 40%; left: 60%; font-size: 5rem; animation-delay: -10s; opacity: 0.06; }
+
+@keyframes floatShip {
+  0%, 100% { transform: translateY(0px) rotate(-2deg); }
+  50% { transform: translateY(-20px) rotate(2deg); }
+}
+
+.bird {
+  position: fixed;
+  color: rgba(255, 255, 255, 0.05);
+  font-size: 2rem;
+  pointer-events: none;
+  z-index: 0;
+  animation: flyBird 12s linear infinite;
+}
+.bird-1 { top: 10%; left: 20%; animation-delay: 0s; }
+.bird-2 { top: 15%; left: 50%; animation-delay: -4s; font-size: 1.5rem; }
+.bird-3 { top: 8%; left: 75%; animation-delay: -8s; font-size: 1.8rem; }
+
+@keyframes flyBird {
+  0% { transform: translate(0, 0) scale(1); opacity: 0.05; }
+  25% { transform: translate(60px, -30px) scale(1.2); opacity: 0.1; }
+  50% { transform: translate(120px, 10px) scale(0.8); opacity: 0.05; }
+  75% { transform: translate(180px, -20px) scale(1.1); opacity: 0.08; }
+  100% { transform: translate(240px, 0) scale(1); opacity: 0.05; }
 }
 
 /* Global scrollbar */
@@ -99,116 +186,52 @@ body {
 }
 
 /* =====================================================================
-   KEYFRAME ANIMATIONS (Premium)
+   KEYFRAME ANIMATIONS
    ===================================================================== */
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(28px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  from { opacity: 0; transform: translateY(28px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 @keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.92) translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
+  from { opacity: 0; transform: scale(0.92) translateY(12px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 @keyframes slideInLeft {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(0);
-  }
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
 }
 @keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 @keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-16px);
-  }
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-16px); }
 }
 @keyframes gradientShift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 @keyframes toastIn {
-  from {
-    opacity: 0;
-    transform: translateX(60px) scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0) scale(1);
-  }
+  from { opacity: 0; transform: translateX(60px) scale(0.9); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
 }
 @keyframes toastOut {
-  from {
-    opacity: 1;
-    transform: translateX(0) scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: translateX(60px) scale(0.9);
-  }
+  from { opacity: 1; transform: translateX(0) scale(1); }
+  to   { opacity: 0; transform: translateX(60px) scale(0.9); }
 }
 @keyframes dotPulse {
-  0%,
-  80%,
-  100% {
-    opacity: 0.15;
-    transform: scale(0.8);
-  }
-  40% {
-    opacity: 0.6;
-    transform: scale(1.2);
-  }
-}
-@keyframes glowPulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 hsl(var(--primary) / 0.3);
-  }
-  50% {
-    box-shadow: 0 0 0 8px hsl(var(--primary) / 0);
-  }
+  0%, 80%, 100% { opacity: 0.15; transform: scale(0.8); }
+  40% { opacity: 0.6; transform: scale(1.2); }
 }
 
 /* =====================================================================
-   LOGIN SCREEN
+   LOGIN SCREEN (dengan Glassmorphism)
    ===================================================================== */
 .login-wrap {
   position: fixed;
@@ -216,28 +239,36 @@ body {
   z-index: 50;
   display: grid;
   grid-template-columns: 1fr;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
 }
 @media (min-width: 768px) {
   .login-wrap {
     grid-template-columns: 1.2fr 0.8fr;
+    padding: 2rem;
   }
 }
 
-/* --- Left panel (Hero) --- */
+/* --- Panel kiri (Hero) --- */
 .login-aside {
   display: none;
   position: relative;
   flex-direction: column;
   justify-content: center;
-  padding: 3.5rem 4.5rem;
+  padding: 3rem 3.5rem;
   color: #fff;
   background:
-    radial-gradient(ellipse 800px 500px at 0% 20%, hsl(174 84% 32% / 0.25), transparent 60%),
-    radial-gradient(ellipse 500px 500px at 100% 80%, hsl(260 60% 50% / 0.1), transparent 50%),
-    linear-gradient(145deg, hsl(220 65% 16%), hsl(224 72% 10%));
-  background-size: 200% 200%;
-  animation: gradientShift 15s ease infinite;
+    radial-gradient(ellipse 600px 400px at 0% 20%, rgba(0, 180, 255, 0.15), transparent 60%),
+    radial-gradient(ellipse 400px 400px at 100% 80%, rgba(0, 100, 200, 0.1), transparent 50%),
+    linear-gradient(145deg, rgba(10, 22, 40, 0.6), rgba(10, 40, 70, 0.4));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: var(--radius-xl) 0 0 var(--radius-xl);
   overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-right: none;
 }
 @media (min-width: 768px) {
   .login-aside {
@@ -245,27 +276,27 @@ body {
   }
 }
 
-/* Decorative orbs */
+/* Dekorasi lingkaran */
 .login-aside::before {
   content: "";
   position: absolute;
   left: -80px;
   top: -80px;
-  width: 300px;
-  height: 300px;
+  width: 280px;
+  height: 280px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.05), transparent 70%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.06), transparent 70%);
   animation: float 8s ease-in-out infinite;
 }
 .login-aside::after {
   content: "";
   position: absolute;
-  right: -120px;
-  bottom: -120px;
-  width: 400px;
-  height: 400px;
+  right: -100px;
+  bottom: -100px;
+  width: 350px;
+  height: 350px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.04), transparent 70%);
+  background: radial-gradient(circle, rgba(0, 180, 255, 0.05), transparent 70%);
   animation: float 12s ease-in-out infinite reverse;
 }
 
@@ -275,9 +306,11 @@ body {
   gap: 0.75rem;
   font-family: "Plus Jakarta Sans", sans-serif;
   font-weight: 800;
-  font-size: 1.4rem;
-  margin-bottom: 3.5rem;
-  animation: fadeInUp 0.6s ease both;
+  font-size: 1.3rem;
+  margin-bottom: 3rem;
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.3);
 }
 .login-aside .brand .logo {
   display: inline-flex;
@@ -290,24 +323,45 @@ body {
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
+.login-aside .brand .logo i {
+  color: hsl(var(--gold));
+}
 .login-aside .headline {
   font-family: "Plus Jakarta Sans", sans-serif;
   font-weight: 800;
   font-size: clamp(2rem, 3.5vw, 3rem);
   line-height: 1.1;
   margin: 0 0 1.2rem;
-  animation: fadeInUp 0.6s ease 0.1s both;
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+}
+.login-aside .headline span {
+  color: hsl(var(--gold));
 }
 .login-aside .lead {
   max-width: 38ch;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.75);
   line-height: 1.7;
   margin: 0;
   font-size: 1.05rem;
-  animation: fadeInUp 0.6s ease 0.2s both;
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 1px 10px rgba(0,0,0,0.2);
+}
+.login-aside .lead i {
+  opacity: 0.5;
+  margin-right: 6px;
+}
+.login-aside .sub-lead {
+  margin-top: 1.5rem;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.4);
+  position: relative;
+  z-index: 2;
 }
 
-/* Dot grid decor */
+/* Dot grid */
 .login-dots {
   position: absolute;
   right: 50px;
@@ -315,7 +369,8 @@ body {
   display: grid;
   grid-template-columns: repeat(5, 8px);
   gap: 16px;
-  opacity: 0.25;
+  opacity: 0.2;
+  z-index: 1;
 }
 .login-dots span {
   width: 6px;
@@ -324,37 +379,57 @@ body {
   background: rgba(255, 255, 255, 0.6);
   animation: dotPulse 3s ease-in-out infinite;
 }
-.login-dots span:nth-child(2n) {
-  animation-delay: 0.3s;
-}
-.login-dots span:nth-child(3n) {
-  animation-delay: 0.6s;
-}
-.login-dots span:nth-child(5n) {
-  animation-delay: 1s;
-}
-.login-dots span:nth-child(7n) {
-  animation-delay: 1.4s;
-}
+.login-dots span:nth-child(2n) { animation-delay: 0.3s; }
+.login-dots span:nth-child(3n) { animation-delay: 0.6s; }
+.login-dots span:nth-child(5n) { animation-delay: 1s; }
+.login-dots span:nth-child(7n) { animation-delay: 1.4s; }
 
-/* --- Right panel (Form) --- */
+/* --- Panel kanan (Form) --- */
 .login-panel {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  background: hsl(var(--background));
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 0 var(--radius-xl) var(--radius-xl) 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-left: none;
 }
 .login-card {
   width: 100%;
   max-width: 26rem;
   animation: fadeInUp 0.5s ease 0.15s both;
 }
+.login-card .mobile-brand {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.login-card .mobile-brand span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: #0a1628;
+  color: hsl(var(--gold));
+  border-radius: 0.6rem;
+}
 .login-card h2 {
   font-family: "Plus Jakarta Sans", sans-serif;
   font-weight: 800;
   font-size: 1.75rem;
   letter-spacing: -0.02em;
+  color: #0a1628;
+}
+.login-card .subtitle {
+  color: #4a5568;
+  margin-top: 0.25rem;
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
 }
 
 /* =====================================================================
@@ -363,6 +438,8 @@ body {
 .app-shell {
   min-height: 100vh;
   background: hsl(var(--background));
+  position: relative;
+  z-index: 1;
 }
 
 /* ---------- Sidebar ---------- */
@@ -463,10 +540,7 @@ body {
   box-shadow: 0 4px 20px -6px hsl(var(--primary) / 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   font-weight: 600;
 }
-.nav-link.active i {
-  opacity: 1;
-}
-/* Active indicator pill (glowing) */
+.nav-link.active i { opacity: 1; }
 .nav-link.active::before {
   content: "";
   position: absolute;
@@ -501,17 +575,11 @@ body {
   font-size: 0.85rem;
   border: 1.5px solid rgba(255, 255, 255, 0.08);
 }
-.sidebar-user p {
-  margin: 0;
-}
+.sidebar-user p { margin: 0; }
 
 /* Sidebar scrollbar */
-.sidebar-nav::-webkit-scrollbar {
-  width: 4px;
-}
-.sidebar-nav::-webkit-scrollbar-track {
-  background: transparent;
-}
+.sidebar-nav::-webkit-scrollbar { width: 4px; }
+.sidebar-nav::-webkit-scrollbar-track { background: transparent; }
 .sidebar-nav::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 20px;
@@ -591,9 +659,7 @@ body {
   flex: 1;
 }
 @media (min-width: 640px) {
-  .content {
-    padding: 2rem 2.5rem 3rem;
-  }
+  .content { padding: 2rem 2.5rem 3rem; }
 }
 
 /* ---------- Responsive Sidebar ---------- */
@@ -606,13 +672,30 @@ body {
     transform: translateX(0);
     animation: slideInLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .main {
-    margin-left: 0;
+  .main { margin-left: 0; }
+  .btn-menu { display: inline-flex; align-items: center; justify-content: center; }
+}
+
+/* ---------- Responsive Login ---------- */
+@media (max-width: 768px) {
+  .login-wrap {
+    padding: 1rem;
+    backdrop-filter: blur(4px);
   }
-  .btn-menu {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+  .login-panel {
+    border-radius: var(--radius-xl);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 2rem 1.5rem;
+    background: rgba(255, 255, 255, 0.92);
+  }
+  .login-card .mobile-brand {
+    display: flex;
+  }
+  .login-card h2 {
+    font-size: 1.5rem;
+  }
+  .login-aside {
+    display: none;
   }
 }
 
@@ -742,7 +825,7 @@ button:disabled {
 }
 
 /* =====================================================================
-   COMPONENTS — CARD (Premium Glass)
+   COMPONENTS — CARD
    ===================================================================== */
 .ui-card {
   background: hsl(var(--card));
@@ -758,7 +841,7 @@ button:disabled {
 }
 
 /* =====================================================================
-   COMPONENTS — TABLE (Premium)
+   COMPONENTS — TABLE
    ===================================================================== */
 .ui-table {
   width: 100%;
@@ -785,9 +868,7 @@ button:disabled {
   border-bottom: 1px solid hsl(var(--border) / 0.4);
   transition: background var(--transition-fast);
 }
-.ui-table tbody tr:last-child td {
-  border-bottom: 0;
-}
+.ui-table tbody tr:last-child td { border-bottom: 0; }
 .ui-table tbody tr:nth-child(even) td {
   background: hsl(var(--muted) / 0.2);
 }
@@ -796,7 +877,7 @@ button:disabled {
 }
 
 /* =====================================================================
-   COMPONENTS — BADGE (Premium)
+   COMPONENTS — BADGE
    ===================================================================== */
 .badge {
   display: inline-flex;
@@ -854,7 +935,7 @@ button:disabled {
 }
 
 /* =====================================================================
-   COMPONENTS — MODAL (Premium Glass)
+   COMPONENTS — MODAL
    ===================================================================== */
 .ui-modal {
   position: fixed;
@@ -894,7 +975,7 @@ button:disabled {
 }
 
 /* =====================================================================
-   STAT CARDS (Dashboard Premium)
+   STAT CARDS (Dashboard)
    ===================================================================== */
 .stat-card {
   background: hsl(var(--card));
@@ -906,7 +987,6 @@ button:disabled {
   position: relative;
   overflow: hidden;
 }
-/* Left accent gradient */
 .stat-card::before {
   content: "";
   position: absolute;
@@ -924,9 +1004,7 @@ button:disabled {
   transform: translateY(-4px);
   border-color: hsl(var(--primary) / 0.15);
 }
-.stat-card:hover::before {
-  opacity: 1;
-}
+.stat-card:hover::before { opacity: 1; }
 
 .stat-card .label {
   font-size: 0.78rem;
@@ -970,7 +1048,6 @@ button:disabled {
   z-index: -1;
 }
 
-/* Progress Bar */
 .stat-progress {
   height: 5px;
   border-radius: 999px;
@@ -1010,7 +1087,7 @@ button:disabled {
   font-weight: 700;
   color: hsl(var(--primary));
 }
-.stat-progress.is-full+.stat-target .pct {
+.stat-progress.is-full + .stat-target .pct {
   color: hsl(var(--success));
 }
 
@@ -1028,7 +1105,7 @@ button:disabled {
 }
 
 /* =====================================================================
-   TOAST (Premium)
+   TOAST
    ===================================================================== */
 #toast {
   pointer-events: none;
