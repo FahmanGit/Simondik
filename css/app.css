@@ -1120,3 +1120,17 @@ select:focus-visible {
     transition-duration: 0.01ms !important;
   }
 }
+/* =====================================================================
+   DEL-ITEM — baris daftar (Data Master & Modal Hapus)
+   ===================================================================== */
+.del-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 0.5rem;
+  transition: background .12s;
+}
+.del-item:hover { background: hsl(var(--muted)); }
+.del-item + .del-item { margin-top: 0.15rem; }

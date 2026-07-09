@@ -20,9 +20,9 @@ function renderList(kategori) {
   const rows = items.map((it) => `
     <div class="del-item">
       <span class="text-sm">${escapeHtml(it.nilai)}</span>
-      ${canEdit ? `<span class="whitespace-nowrap">
-        <button class="ui-btn-outline h-8 px-2" data-edit-master="${it.id}" data-kat="${kategori}"><i class="fa-solid fa-pen"></i></button>
-        <button class="ui-btn-danger h-8 px-2" data-del-master="${it.id}" data-kat="${kategori}"><i class="fa-solid fa-trash"></i></button>
+      ${canEdit ? `<span class="flex shrink-0 items-center gap-2">
+        <button class="ui-btn-outline h-8 w-8 justify-center p-0" title="Ubah" data-edit-master="${it.id}" data-kat="${kategori}"><i class="fa-solid fa-pen"></i></button>
+        <button class="ui-btn-danger h-8 w-8 justify-center p-0" title="Hapus" data-del-master="${it.id}" data-kat="${kategori}"><i class="fa-solid fa-trash"></i></button>
       </span>` : ""}
     </div>`).join("");
   const el = $("#master-" + (kategori === "jenis_diklat" ? "jenis" : "nama"));
