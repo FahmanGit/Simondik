@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#0a1628" />
   <title>E-Mondik — Monitoring Peserta Diklat</title>
 
-  <!-- Tailwind (Play CDN) -->
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -40,7 +40,7 @@
     };
   </script>
 
-  <!-- Font, Ikon, & Library -->
+  <!-- Font, Ikon, Library -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
@@ -55,75 +55,70 @@
 <body>
 
   <!-- ===== DEKORASI LATAR BELAKANG MARITIM ===== -->
-  <!-- Bintang / cahaya -->
   <div class="stars"></div>
-
-  <!-- Gelombang -->
   <div class="wave"></div>
   <div class="wave"></div>
-
-  <!-- Ikon Kapal & Jangkar -->
   <div class="ship-icon ship-icon-1"><i class="fa-solid fa-ship"></i></div>
   <div class="ship-icon ship-icon-2"><i class="fa-regular fa-anchor"></i></div>
   <div class="ship-icon ship-icon-3"><i class="fa-solid fa-sailboat"></i></div>
-
-  <!-- Burung camar -->
   <div class="bird bird-1"><i class="fa-regular fa-crow"></i></div>
   <div class="bird bird-2"><i class="fa-regular fa-crow"></i></div>
   <div class="bird bird-3"><i class="fa-regular fa-crow"></i></div>
 
   <!-- ================= LOGIN ================= -->
   <div id="login-screen" class="login-wrap">
-    <!-- Panel kiri (Hero) -->
-    <aside class="login-aside">
-      <div class="login-dots" aria-hidden="true">
-        <span></span><span></span><span></span><span></span><span></span>
-        <span></span><span></span><span></span><span></span><span></span>
-        <span></span><span></span><span></span><span></span><span></span>
-        <span></span><span></span><span></span><span></span><span></span>
-      </div>
-      <div class="brand">
-        <span class="logo"><i class="fa-solid fa-anchor"></i></span>
-        E-Mondik
-      </div>
-      <h1 class="headline">Monitoring peserta diklat,<br />dalam satu dasbor.</h1>
-      <p class="lead">
-        <i class="fa-solid fa-ship"></i>
-        Pantau realisasi peserta terhadap target, kelola data diklat, dan tinjau aktivitas — untuk <strong>PIP Makassar</strong>.
-      </p>
-      <p class="sub-lead">
-        <i class="fa-regular fa-clock"></i> Berdiri sejak 1921 — Mencetak Pelaut Andal Indonesia
-      </p>
-    </aside>
-
-    <!-- Panel kanan (Form) -->
-    <div class="login-panel">
-      <div class="login-card">
-        <!-- Brand Mobile -->
-        <div class="mobile-brand">
-          <span><i class="fa-solid fa-anchor"></i></span>
-          <span style="background:transparent;color:inherit;font-weight:800;font-size:1.2rem;padding:0;">E-Mondik</span>
+    <div class="login-container">
+      <!-- Panel kiri (Hero) -->
+      <aside class="login-aside">
+        <div class="login-dots" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
         </div>
+        <div class="brand">
+          <span class="logo"><i class="fa-solid fa-anchor"></i></span>
+          E-Mondik
+        </div>
+        <h1 class="headline">Monitoring peserta diklat,<br />dalam satu dasbor.</h1>
+        <p class="lead">
+          <i class="fa-solid fa-ship"></i>
+          Pantau realisasi peserta terhadap target, kelola data diklat, dan tinjau aktivitas — untuk <strong>PIP Makassar</strong>.
+        </p>
+        <p class="sub-lead">
+          <i class="fa-regular fa-clock"></i> Berdiri sejak 1921 — Mencetak Pelaut Andal Indonesia
+        </p>
+      </aside>
 
-        <h2>Selamat datang kembali</h2>
-        <p class="subtitle">Masuk untuk mengakses dasbor monitoring.</p>
-
-        <form id="login-form" class="space-y-4">
-          <div>
-            <label class="ui-label" for="login-email">Email</label>
-            <input id="login-email" type="email" required placeholder="nama@pipmakassar.ac.id" class="ui-input" />
+      <!-- Panel kanan (Form) -->
+      <div class="login-panel">
+        <div class="login-card">
+          <!-- Brand Mobile -->
+          <div class="mobile-brand">
+            <span><i class="fa-solid fa-anchor"></i></span>
+            <span style="background:transparent;color:inherit;font-weight:800;font-size:1.1rem;padding:0;">E-Mondik</span>
           </div>
-          <div>
-            <label class="ui-label" for="login-password">Kata sandi</label>
-            <input id="login-password" type="password" required placeholder="••••••••" class="ui-input" />
-          </div>
-          <p id="login-error" class="hidden rounded-lg border border-danger/25 bg-danger/10 px-3 py-2 text-sm text-danger"></p>
-          <button type="submit" class="ui-btn-primary w-full"><i class="fa-solid fa-right-to-bracket"></i> Masuk</button>
-        </form>
 
-        <div class="login-footer" style="margin-top:2rem;text-align:center;font-size:0.8rem;color:#718096;">
-          <i class="fa-regular fa-anchor" style="margin-right:6px;"></i>
-          PIP Makassar — Sistem Monitoring Peserta Diklat
+          <h2>Selamat datang kembali</h2>
+          <p class="subtitle">Masuk untuk mengakses dasbor monitoring.</p>
+
+          <form id="login-form" class="space-y-3">
+            <div>
+              <label class="ui-label" for="login-email">Email</label>
+              <input id="login-email" type="email" required placeholder="nama@pipmakassar.ac.id" class="ui-input" />
+            </div>
+            <div>
+              <label class="ui-label" for="login-password">Kata sandi</label>
+              <input id="login-password" type="password" required placeholder="••••••••" class="ui-input" />
+            </div>
+            <p id="login-error" class="hidden rounded-lg border border-danger/25 bg-danger/10 px-3 py-2 text-sm text-danger"></p>
+            <button type="submit" class="ui-btn-primary w-full"><i class="fa-solid fa-right-to-bracket"></i> Masuk</button>
+          </form>
+
+          <div class="login-footer">
+            <i class="fa-regular fa-anchor" style="margin-right:6px;"></i>
+            PIP Makassar — Sistem Monitoring Peserta Diklat
+          </div>
         </div>
       </div>
     </div>
