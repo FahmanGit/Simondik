@@ -113,8 +113,10 @@ function renderTable() {
   pPage = pg.page;
   const rows = all.slice((pPage - 1) * pSize, pPage * pSize);
   const admin = canWrite();
+  const cb = (id) => admin ? `<td class="w-8"><input type="checkbox" class="row-cb" data-cb="${id}" ${selected.has(String(id)) ? "checked" : ""} /></td>` : "";
   const body = rows.map((p) => `
-    <tr>
+    <tr data-row="${p.id}" class="cursor-pointer">
+      ${cb(p.id)}
       <td>${escapeHtml(p.nit_nik || "-")}</td>
       <td class="font-medium">${escapeHtml(p.nama_peserta)}</td>
       <td>${escapeHtml(p.nama_diklat)}</td>
@@ -127,17 +129,72 @@ function renderTable() {
         <button class="ui-btn-danger h-8 px-2" data-del="${p.id}"><i class="fa-solid fa-trash"></i></button>
       </td>` : ""}
     </tr>`).join("");
+  const allChecked = rows.length && rows.every((p) => selected.has(String(p.id)));
   $("#peserta-table").innerHTML = `
     <table class="ui-table">
       <thead><tr>
+        ${admin ? `<th class="w-8"><input type="checkbox" id="cb-all" ${allChecked ? "checked" : ""} /></th>` : ""}
         <th>NIT/NIK</th><th>Nama Peserta</th><th>Nama Diklat</th><th>Angkatan</th><th>Kelas</th>
         <th>Status</th><th>Jenis Kelamin</th>${admin ? "<th class='text-right'>Aksi</th>" : ""}
       </tr></thead>
-      <tbody>${body || `<tr><td colspan="8" class="py-8 text-center text-muted-foreground">Belum ada data.</td></tr>`}</tbody>
+      <tbody>${body || `<tr><td colspan="9" class="py-8 text-center text-muted-foreground">Belum ada data.</td></tr>`}</tbody>
     </table>`;
   // ringkasan + kontrol halaman
   const sumEl = $("#p-summary"); if (sumEl) sumEl.textContent = pg.summary;
   const pagerEl = $("#p-pager"); if (pagerEl) pagerEl.innerHTML = pg.controls;
+  updateBulkBar();
+}
+
+// ---------------------------------------------------------------- seleksi & aksi massal
+const selected = new Set();
+
+function updateBulkBar() {
+  const bar = $("#bulk-bar"); if (!bar) return;
+  if (selected.size > 0) {
+    bar.classList.remove("hidden");
+    bar.classList.add("flex");
+    $("#bulk-count").textContent = `${selected.size} peserta terpilih`;
+  } else {
+    bar.classList.add("hidden");
+    bar.classList.remove("flex");
+  }
+}
+
+async function bulkDelete() {
+  if (selected.size === 0) return;
+  if (!confirm(`Hapus ${selected.size} peserta terpilih? Tindakan ini permanen.`)) return;
+  const ids = [...selected];
+  const { error } = await sb.from("peserta").delete().in("id", ids);
+  if (error) return toast(error.message, "err");
+  await logActivity("hapus", `hapus massal ${ids.length} peserta`);
+  selected.clear();
+  toast(`${ids.length} peserta dihapus.`);
+  renderPeserta();
+}
+
+async function bulkApplyStatus() {
+  const status = $("#bulk-status").value;
+  const ids = [...selected];
+  if (!ids.length) return;
+  const { error } = await sb.from("peserta").update({ status }).in("id", ids);
+  if (error) return toast(error.message, "err");
+  await logActivity("edit", `ubah status massal ${ids.length} peserta → ${status}`);
+  closeModal("modal-bulk");
+  selected.clear();
+  toast(`Status ${ids.length} peserta diperbarui.`);
+  renderPeserta();
+}
+
+function showDetail(id) {
+  const p = cache.find((x) => String(x.id) === String(id));
+  if (!p) return;
+  const row = (label, val) => `<div class="flex justify-between gap-4 border-b border-border py-1.5"><span class="text-muted-foreground">${label}</span><span class="text-right font-medium">${escapeHtml(val || "-")}</span></div>`;
+  $("#detail-body").innerHTML =
+    row("NIT/NIK", p.nit_nik) + row("Nama Peserta", p.nama_peserta) + row("Jenis Diklat", p.jenis_diklat) +
+    row("Nama Diklat", p.nama_diklat) + row("Angkatan", getAngkatan(p)) + row("Kelas", getKelas(p)) +
+    row("Status", p.status) + row("Jenis Kelamin", p.jenis_kelamin) +
+    row("Tanggal Input", p.created_at ? new Date(p.created_at).toLocaleString("id-ID") : "-");
+  openModal("modal-detail");
 }
 
 // ---------------------------------------------------------------- template
@@ -380,8 +437,37 @@ export function initPeserta() {
   $("#mp-submit").addEventListener("click", submitEdit);
   // delegasi tombol edit/hapus baris
   $("#peserta-table").addEventListener("click", (e) => {
+    // checkbox pilih semua
+    if (e.target.id === "cb-all") {
+      const pageIds = filtered().slice((pPage - 1) * pSize, pPage * pSize).map((p) => String(p.id));
+      if (e.target.checked) pageIds.forEach((id) => selected.add(id));
+      else pageIds.forEach((id) => selected.delete(id));
+      renderTable();
+      return;
+    }
+    // checkbox per baris
+    const cb = e.target.closest(".row-cb");
+    if (cb) {
+      const id = cb.getAttribute("data-cb");
+      if (cb.checked) selected.add(id); else selected.delete(id);
+      updateBulkBar();
+      return;
+    }
+    // tombol edit / hapus
     const ed = e.target.closest("[data-edit]"); const dl = e.target.closest("[data-del]");
-    if (ed) openEdit(ed.getAttribute("data-edit"));
-    if (dl) deleteRow(dl.getAttribute("data-del"));
+    if (ed) { openEdit(ed.getAttribute("data-edit")); return; }
+    if (dl) { deleteRow(dl.getAttribute("data-del")); return; }
+    // klik baris → detail (selain area tombol/checkbox)
+    const tr = e.target.closest("[data-row]");
+    if (tr) showDetail(tr.getAttribute("data-row"));
   });
+
+  // Aksi massal
+  $("#bulk-del")?.addEventListener("click", bulkDelete);
+  $("#bulk-edit")?.addEventListener("click", () => {
+    if (selected.size === 0) return;
+    $("#bulk-info").textContent = `${selected.size} peserta akan diubah statusnya.`;
+    openModal("modal-bulk");
+  });
+  $("#bulk-apply")?.addEventListener("click", bulkApplyStatus);
 }

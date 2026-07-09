@@ -1,5 +1,5 @@
 import { $, $$ } from "./ui.js";
-const TITLES = { dashboard: "Monitoring Peserta Diklat", peserta: "Modul Peserta Diklat", history: "History Activity", akun: "Manajemen Akun" };
+const TITLES = { dashboard: "Monitoring Peserta Diklat", peserta: "Modul Peserta Diklat", history: "History Activity", akun: "Manajemen Akun", master: "Data Master" };
 const onShow = {};
 export function onView(view, cb) { onShow[view] = cb; }
 export function showView(view) {

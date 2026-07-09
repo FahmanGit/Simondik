@@ -6,6 +6,7 @@ import { renderDashboard, initDashboard } from "./modules/dashboard.js";
 import { renderPeserta, initPeserta } from "./modules/peserta.js";
 import { renderHistory } from "./modules/history.js";
 import { renderAkun, initAkun } from "./modules/akun.js";
+import { renderMaster, initMaster } from "./modules/master.js";
 
 const BULAN = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
 
@@ -50,11 +51,12 @@ async function boot() {
   fillPeriode();
 
   // Inisialisasi handler modul sekali.
-  initDashboard(); initPeserta(); initAkun();
+  initDashboard(); initPeserta(); initAkun(); initMaster();
   onView("dashboard", renderDashboard);
   onView("peserta", renderPeserta);
   onView("history", renderHistory);
   onView("akun", renderAkun);
+  onView("master", renderMaster);
 
   // Filter periode → segarkan dashboard.
   $("#filter-tahun").addEventListener("change", (e) => { $("#tahun-label").textContent = e.target.value; renderDashboard(); });
